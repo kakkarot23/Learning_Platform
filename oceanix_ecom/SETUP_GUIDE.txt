@@ -1,0 +1,420 @@
+================================================================================
+                        OCEANIX E-COMMERCE PLATFORM
+                          COMPLETE SETUP GUIDE
+================================================================================
+
+Thank you for choosing OCEANIX! This guide will help you set up and run the
+complete e-commerce website on your machine.
+
+================================================================================
+SYSTEM REQUIREMENTS
+================================================================================
+
+- Windows 10/11, macOS, or Linux
+- Python 3.8 or higher
+- pip (comes with Python)
+- Browser (Chrome, Firefox, Safari, Edge)
+
+================================================================================
+STEP 1: VERIFY PYTHON INSTALLATION
+================================================================================
+
+Open Command Prompt/Terminal and run:
+
+    python --version
+
+You should see Python 3.8 or higher. If not, download from python.org
+
+================================================================================
+STEP 2: NAVIGATE TO PROJECT DIRECTORY
+================================================================================
+
+Open Command Prompt/Terminal and navigate to the project:
+
+    cd d:\OCEANIX\oceanix_ecom
+
+Or use full path:
+
+    cd "d:\OCEANIX\oceanix_ecom"
+
+================================================================================
+STEP 3: CREATE VIRTUAL ENVIRONMENT
+================================================================================
+
+Windows:
+    python -m venv venv
+    venv\Scripts\activate
+
+macOS/Linux:
+    python3 -m venv venv
+    source venv/bin/activate
+
+You should see (venv) at the start of your terminal prompt.
+
+================================================================================
+STEP 4: INSTALL DEPENDENCIES
+================================================================================
+
+Run:
+    pip install -r requirements.txt
+
+This will install:
+- Django 4.2
+- Pillow (for image handling)
+- python-decouple (for configuration)
+
+Wait for installation to complete.
+
+================================================================================
+STEP 5: RUN DATABASE MIGRATIONS
+================================================================================
+
+Create the database and tables:
+
+    python manage.py migrate
+
+You should see "Operations to perform" and "Running migrations..." messages
+followed by success confirmation.
+
+================================================================================
+STEP 6: CREATE ADMIN ACCOUNT (SUPERUSER)
+================================================================================
+
+Create an admin account:
+
+    python manage.py createsuperuser
+
+Follow the prompts:
+- Username: (enter your choice, e.g., admin)
+- Email: (enter your email)
+- Password: (enter a strong password)
+- Password (again): (confirm password)
+
+Example:
+    Username: admin
+    Email: admin@oceanix.com
+    Password: Admin@123456
+    Password (again): Admin@123456
+
+================================================================================
+STEP 7: LOAD SAMPLE PRODUCTS
+================================================================================
+
+Populate the database with sample products:
+
+    python manage.py load_sample_products
+
+You should see "✓ Sample products loaded successfully!"
+
+This adds 6 products with full descriptions:
+1. Professional Stainless Steel Coconut Opener Tool
+2. Leakproof Water Bottle with Silicone Sleeve
+3. Fiber Plastic Water Glass Set
+4. Ice Infuser Water Bottle
+5. 3-Compartment Stainless Steel Lunch Box
+6. Stainless Steel Lunch Box with Soup Container
+
+================================================================================
+STEP 8: START DEVELOPMENT SERVER
+================================================================================
+
+Start the Django development server:
+
+    python manage.py runserver
+
+You should see:
+    Starting development server at http://127.0.0.1:8000/
+    Quit the server with CTRL-BREAK.
+
+================================================================================
+STEP 9: ACCESS THE WEBSITE
+================================================================================
+
+Open your web browser and visit:
+
+CUSTOMER SITE: http://127.0.0.1:8000/
+ADMIN PANEL:   http://127.0.0.1:8000/admin/
+
+================================================================================
+MAIN FEATURES
+================================================================================
+
+CUSTOMER FEATURES:
+✓ Browse all products
+✓ Search products by name/description
+✓ View product details with images
+✓ Create account (Register)
+✓ Login to account
+✓ Add products to shopping cart
+✓ Update cart quantities
+✓ Proceed to checkout
+✓ Enter shipping information
+✓ Place order with order number
+✓ View order confirmation
+✓ Track order history
+✓ View previous orders
+
+ADMIN FEATURES (at /admin/):
+✓ Login with superuser credentials
+✓ Add/Edit/Delete products
+✓ Manage product inventory
+✓ View all orders
+✓ Update order status (pending → processing → shipped → delivered)
+✓ Update payment status
+✓ Add notes to orders
+✓ Manage customer accounts
+✓ View cart contents
+✓ Export order data
+
+================================================================================
+QUICK TEST WALKTHROUGH
+================================================================================
+
+1. REGISTER A CUSTOMER ACCOUNT
+   - Click "Register" on home page
+   - Fill in username, email, password
+   - Submit
+   - You'll see "Registration successful! Please log in."
+
+2. LOGIN
+   - Click "Login"
+   - Enter username and password
+   - Submit
+   - You're logged in!
+
+3. BROWSE PRODUCTS
+   - Click on any product to see details
+   - Scroll down to view full description
+
+4. ADD TO CART
+   - Click "Add to Cart" button
+   - Choose quantity
+   - Product added to cart!
+
+5. VIEW CART
+   - Click cart icon in top menu
+   - See all cart items
+   - Update quantities if needed
+
+6. CHECKOUT
+   - Click "Proceed to Checkout"
+   - Fill in shipping details
+   - Click "Place Order"
+   - See order confirmation with order number!
+
+7. VIEW ORDER HISTORY
+   - Click "My Orders" in menu
+   - See all your previous orders
+
+8. ADMIN PANEL
+   - Go to http://127.0.0.1:8000/admin/
+   - Login with superuser credentials
+   - Browse Products section
+   - Browse Orders section
+   - Click on any order to update its status
+
+================================================================================
+STOPPING THE SERVER
+================================================================================
+
+Press CTRL+C in the terminal where the server is running.
+
+================================================================================
+COMMON ISSUES & FIXES
+================================================================================
+
+ISSUE: "ModuleNotFoundError: No module named 'django'"
+FIX: Make sure you activated the virtual environment and ran pip install -r requirements.txt
+
+ISSUE: "port 8000 is already in use"
+FIX: Use a different port:
+    python manage.py runserver 8001
+
+ISSUE: "Database error" after migrations
+FIX: Reset the database:
+    python manage.py flush
+    python manage.py migrate
+    python manage.py createsuperuser
+    python manage.py load_sample_products
+
+ISSUE: Images not showing
+FIX: Make sure the media directory exists and has proper permissions
+
+ISSUE: Admin panel styles not loading
+FIX: Run:
+    python manage.py collectstatic --noinput
+
+================================================================================
+FILE STRUCTURE EXPLAINED
+================================================================================
+
+oceanix_ecom/
+├── oceanix/           - Main Django project configuration
+├── store/            - Main application
+│   ├── models.py     - Database models
+│   ├── views.py      - Page logic
+│   ├── urls.py       - URL routes
+│   ├── admin.py      - Admin panel configuration
+│   ├── forms.py      - User forms
+│   ├── signals.py    - Automatic cart creation
+│   ├── management/   - Custom commands
+│   ├── migrations/   - Database changes
+│   ├── templates/    - HTML pages
+│   ├── static/       - CSS, JS, images
+│   └── media/        - Uploaded product images
+├── manage.py         - Django management tool
+├── requirements.txt  - Python dependencies
+└── README.md        - Full documentation
+
+================================================================================
+DATABASE TABLES CREATED
+================================================================================
+
+Products        - All product listings
+Users          - Customer accounts
+Carts          - Shopping carts
+CartItems      - Items in carts
+Orders         - Customer orders
+OrderItems     - Items in orders
+Admin Logs     - Admin user activities
+
+================================================================================
+URL ENDPOINTS
+================================================================================
+
+PUBLIC PAGES:
+/                     - Home (all products)
+/product/<id>/        - Product detail
+/login/              - Login page
+/register/           - Registration page
+/about/              - About page
+/contact/            - Contact page
+
+CUSTOMER PAGES (login required):
+/cart/               - Shopping cart
+/checkout/           - Checkout
+/order-confirmation/ - Order confirmation
+/order-history/      - All orders
+/logout/             - Logout
+
+ADMIN PANEL:
+/admin/              - Django admin panel
+
+================================================================================
+NEXT STEPS
+================================================================================
+
+1. EXPLORE THE WEBSITE
+   - Create test accounts
+   - Browse products
+   - Test the checkout process
+
+2. ADD MORE PRODUCTS
+   - Go to /admin/
+   - Click "Products"
+   - Click "Add Product"
+   - Fill details and save
+
+3. UPLOAD PRODUCT IMAGES
+   - Edit a product in admin
+   - Upload image from your computer
+   - Save
+
+4. TEST ADMIN FEATURES
+   - Create an order
+   - Go to Orders in admin
+   - Try changing order status
+   - See status changes reflected
+
+5. CUSTOMIZE THE WEBSITE
+   - Edit store/static/css/style.css for colors
+   - Edit templates in store/templates/store/ for layout
+   - Update footer, header, etc.
+
+================================================================================
+PRODUCTION DEPLOYMENT
+================================================================================
+
+Before going live:
+
+1. Change SECRET_KEY in oceanix/settings.py
+2. Set DEBUG = False
+3. Update ALLOWED_HOSTS with your domain
+4. Use PostgreSQL instead of SQLite
+5. Set up email configuration
+6. Enable HTTPS
+7. Use environment variables for sensitive data
+8. Deploy on Heroku, AWS, DigitalOcean, etc.
+
+See README.md for more details.
+
+================================================================================
+SUPPORT & DOCUMENTATION
+================================================================================
+
+Django Documentation: https://docs.djangoproject.com/
+Pillow (Images): https://python-pillow.org/
+Python: https://python.org/
+
+PROJECT README: Open README.md for full documentation
+
+================================================================================
+TROUBLESHOOTING CHECKLIST
+================================================================================
+
+□ Python installed and version 3.8+?
+□ Virtual environment created and activated?
+□ requirements.txt installed?
+□ Database migrated?
+□ Superuser created?
+□ Sample products loaded?
+□ Server running without errors?
+□ Browser showing website at localhost:8000?
+□ Can register and login?
+□ Can add products to cart?
+□ Can see products in admin?
+□ Can change order status in admin?
+
+================================================================================
+QUICK COMMANDS REFERENCE
+================================================================================
+
+# Activate virtual environment
+Windows: venv\Scripts\activate
+Linux/Mac: source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Create database
+python manage.py migrate
+
+# Create admin user
+python manage.py createsuperuser
+
+# Load sample products
+python manage.py load_sample_products
+
+# Start server
+python manage.py runserver
+
+# Reset database
+python manage.py flush
+
+# Create new model migration
+python manage.py makemigrations
+
+# Apply migrations
+python manage.py migrate
+
+# Collect static files
+python manage.py collectstatic --noinput
+
+================================================================================
+                         YOU'RE ALL SET!
+                    Enjoy your OCEANIX Platform
+================================================================================
+
+Questions? Check README.md or Django documentation.
+
+Happy coding! 🎉

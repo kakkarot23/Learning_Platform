@@ -1,0 +1,84 @@
+{% extends 'store/admin/base_admin.html' %}
+
+{% block title %}Products{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+    <h1><i class="fas fa-box"></i> Products</h1>
+    <a href="{% url 'add_product' %}" class="btn btn-primary"><i class="fas fa-plus"></i> Add Product</a>
+</div>
+
+<div class="admin-toolbar">
+    <form method="get" class="admin-search">
+        <input type="text" name="q" value="{{ query }}" placeholder="Search products...">
+        <button type="submit" class="btn btn-secondary"><i class="fas fa-search"></i></button>
+        {% if query %}<a href="{% url 'admin_product_list' %}" class="btn btn-secondary">Clear</a>{% endif %}
+    </form>
+</div>
+
+<div class="admin-card">
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>MRP</th>
+                <th>Stock</th>
+                <th>Rating</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" class="table-thumb" alt="{{ product.name }}">
+                    {% else %}
+                    <span class="no-thumb"><i class="fas fa-image"></i></span>
+                    {% endif %}
+                </td>
+                <td>
+                    <strong>{{ product.name|truncatechars:40 }}</strong>
+                    {% if product.short_description %}
+                    <br><small>{{ product.short_description|truncatechars:50 }}</small>
+                    {% endif %}
+                </td>
+                <td>{{ product.category.name|default:"—" }}</td>
+                <td class="price-cell">₹{{ product.price }}</td>
+                <td>{% if product.mrp %}₹{{ product.mrp }}{% else %}—{% endif %}</td>
+                <td>
+                    {% if product.stock <= 5 %}
+                    <span class="badge badge-danger">{{ product.stock }}</span>
+                    {% else %}
+                    {{ product.stock }}
+                    {% endif %}
+                </td>
+                <td>
+                    <span class="rating-mini"><i class="fas fa-star"></i> {{ product.rating }}</span>
+                </td>
+                <td>
+                    {% if product.is_active %}
+                    <span class="badge badge-success">Active</span>
+                    {% else %}
+                    <span class="badge badge-secondary">Inactive</span>
+                    {% endif %}
+                </td>
+                <td class="action-cell">
+                    <a href="{% url 'product_detail' product.id %}" class="btn-icon" title="View"><i class="fas fa-eye"></i></a>
+                    <a href="{% url 'edit_product' product.id %}" class="btn-icon" title="Edit"><i class="fas fa-edit"></i></a>
+                    <a href="{% url 'delete_product' product.id %}" class="btn-icon btn-icon-danger" title="Delete"><i class="fas fa-trash"></i></a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="9" class="empty-text">No products found. <a href="{% url 'add_product' %}">Add your first product</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

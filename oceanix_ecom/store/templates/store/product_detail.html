@@ -1,0 +1,181 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} - OCEANIX{% endblock %}
+
+{% block content %}
+<div class="container product-detail-page">
+    <nav class="breadcrumb-nav">
+        <a href="{% url 'home' %}">Home</a>
+        {% if product.category %}
+        <span>/</span>
+        <a href="{% url 'home' %}?category={{ product.category.slug }}">{{ product.category.name }}</a>
+        {% endif %}
+        <span>/</span>
+        <span>{{ product.name|truncatechars:40 }}</span>
+    </nav>
+
+    <div class="product-detail-layout">
+        <!-- Image Section -->
+        <div class="detail-left">
+            <div class="detail-image-box">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="detail-image">
+                {% else %}
+                    <div class="no-image-large"><i class="fas fa-image"></i> No Image</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Info Section -->
+        <div class="detail-right">
+            <h1 class="detail-title">{{ product.name }}</h1>
+
+            <div class="detail-rating">
+                <span class="rating-badge large"><i class="fas fa-star"></i> {{ product.rating }}</span>
+                <span class="review-count">{{ product.review_count }} Ratings & Reviews</span>
+            </div>
+
+            <div class="detail-price-box">
+                {% if product.get_discount_percent %}
+                <span class="discount-label">{{ product.get_discount_percent }}% off</span>
+                {% endif %}
+                <div class="price-row large">
+                    <span class="selling-price">₹{{ product.price }}</span>
+                    {% if product.get_display_mrp %}
+                    <span class="mrp-price">M.R.P: <s>₹{{ product.get_display_mrp }}</s></span>
+                    {% endif %}
+                </div>
+                <p class="tax-note">Inclusive of all taxes</p>
+            </div>
+
+            <div class="delivery-box">
+                <h4><i class="fas fa-truck"></i> Delivery Options</h4>
+                <p><i class="fas fa-map-marker-alt"></i> Enter PIN code for delivery estimate</p>
+                <p class="delivery-highlight"><i class="fas fa-bolt"></i> Free Delivery by tomorrow</p>
+                <p><i class="fas fa-undo"></i> 7 Days Return Policy</p>
+            </div>
+
+            <div class="stock-info">
+                {% if product.stock > 0 %}
+                <span class="in-stock"><i class="fas fa-check-circle"></i> In Stock — {{ product.stock }} available</span>
+                {% else %}
+                <span class="out-of-stock"><i class="fas fa-times-circle"></i> Currently Unavailable</span>
+                {% endif %}
+            </div>
+
+            {% if user.is_authenticated and product.stock > 0 %}
+            <div class="buy-section">
+                <form method="post" action="{% url 'add_to_cart' product.id %}" class="buy-form">
+                    {% csrf_token %}
+                    <div class="qty-box">
+                        <label>Qty:</label>
+                        <select name="quantity" class="qty-select">
+                            {% for i in "12345678910"|make_list %}
+                            {% if forloop.counter <= product.stock %}
+                            <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-cart btn-large"><i class="fas fa-cart-plus"></i> ADD TO CART</button>
+                </form>
+                <form method="post" action="{% url 'add_to_cart' product.id %}" class="buy-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="quantity" value="1">
+                    <input type="hidden" name="next" value="checkout">
+                    <button type="submit" class="btn btn-buy btn-large"><i class="fas fa-bolt"></i> BUY NOW</button>
+                </form>
+            </div>
+            {% elif not user.is_authenticated %}
+            <div class="login-prompt">
+                <a href="{% url 'login' %}?next={% url 'product_detail' product.id %}" class="btn btn-buy btn-large">Login to Buy</a>
+            </div>
+            {% endif %}
+
+            {% if user.is_staff %}
+            <div class="admin-actions">
+                <a href="{% url 'edit_product' product.id %}" class="btn btn-warning"><i class="fas fa-edit"></i> Edit</a>
+                <a href="{% url 'delete_product' product.id %}" class="btn btn-danger"><i class="fas fa-trash"></i> Delete</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Product Details Tabs -->
+    <div class="product-tabs">
+        <div class="tab-header">
+            <button class="tab-btn active" data-tab="description">Description</button>
+            {% if product.get_highlights_list %}
+            <button class="tab-btn" data-tab="highlights">Highlights</button>
+            {% endif %}
+            <button class="tab-btn" data-tab="payment">Payment & Delivery</button>
+        </div>
+
+        <div class="tab-content active" id="description">
+            <h3>Product Description</h3>
+            <div class="description-text">{{ product.description|linebreaks }}</div>
+        </div>
+
+        {% if product.get_highlights_list %}
+        <div class="tab-content" id="highlights">
+            <h3>Key Highlights</h3>
+            <ul class="highlights-list">
+                {% for highlight in product.get_highlights_list %}
+                <li><i class="fas fa-check"></i> {{ highlight }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <div class="tab-content" id="payment">
+            <h3>Payment Options</h3>
+            <div class="payment-options-grid">
+                <div class="pay-option"><i class="fas fa-money-bill-wave"></i><span>Cash on Delivery</span></div>
+                <div class="pay-option"><i class="fas fa-mobile-alt"></i><span>UPI (GPay, PhonePe, Paytm)</span></div>
+                <div class="pay-option"><i class="fas fa-credit-card"></i><span>Credit / Debit Card</span></div>
+                <div class="pay-option"><i class="fas fa-university"></i><span>Net Banking</span></div>
+                <div class="pay-option"><i class="fas fa-wallet"></i><span>Wallet</span></div>
+            </div>
+            <h3 style="margin-top:24px;">Delivery Information</h3>
+            <ul class="highlights-list">
+                <li><i class="fas fa-truck"></i> Free delivery on orders above ₹499</li>
+                <li><i class="fas fa-box"></i> Secure packaging</li>
+                <li><i class="fas fa-undo"></i> 7-day easy return policy</li>
+            </ul>
+        </div>
+    </div>
+
+    {% if related_products %}
+    <section class="related-section">
+        <h2>Similar Products</h2>
+        <div class="products-grid compact">
+            {% for rp in related_products %}
+            <div class="product-card">
+                <a href="{% url 'product_detail' rp.id %}" class="product-image">
+                    {% if rp.image %}<img src="{{ rp.image.url }}" alt="{{ rp.name }}">{% endif %}
+                </a>
+                <div class="product-info">
+                    <a href="{% url 'product_detail' rp.id %}" class="product-title">{{ rp.name|truncatechars:40 }}</a>
+                    <div class="price-row">
+                        <span class="selling-price">₹{{ rp.price }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</div>
+
+<script>
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+});
+</script>
+{% endblock %}

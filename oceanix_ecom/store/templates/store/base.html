@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}OCEANIX - Shop Online{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Top Header Bar -->
+    <header class="top-header">
+        <div class="container header-inner">
+            <a href="{% url 'home' %}" class="logo">
+                <i class="fas fa-water"></i>
+                <span>OCEANIX</span>
+            </a>
+
+            <form method="get" action="{% url 'home' %}" class="header-search">
+                <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Search for products, brands and more...">
+                <button type="submit"><i class="fas fa-search"></i></button>
+            </form>
+
+            <div class="header-actions">
+                {% if user.is_authenticated %}
+                    {% if user.is_staff %}
+                    <a href="{% url 'admin_dashboard' %}" class="header-action" title="Admin Panel">
+                        <i class="fas fa-user-shield"></i>
+                        <span>Admin</span>
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'order_history' %}" class="header-action">
+                        <i class="fas fa-box"></i>
+                        <span>Orders</span>
+                    </a>
+                    <a href="{% url 'cart' %}" class="header-action cart-action">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Cart</span>
+                        {% if cart_count %}<span class="cart-badge">{{ cart_count }}</span>{% endif %}
+                    </a>
+                    <div class="header-user">
+                        <i class="fas fa-user-circle"></i>
+                        <span>{{ user.first_name|default:user.username }}</span>
+                        <a href="{% url 'logout' %}" class="logout-link">Logout</a>
+                    </div>
+                {% else %}
+                    <a href="{% url 'login' %}" class="header-action">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Login</span>
+                    </a>
+                    <a href="{% url 'register' %}" class="btn-register-header">Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <!-- Category Navigation -->
+    <nav class="category-bar">
+        <div class="container category-inner">
+            <a href="{% url 'home' %}" class="cat-link {% if not active_category %}active{% endif %}">
+                <i class="fas fa-th"></i> All
+            </a>
+            {% for cat in categories %}
+            <a href="{% url 'home' %}?category={{ cat.slug }}" class="cat-link {% if active_category == cat.slug %}active{% endif %}">
+                <i class="fas {{ cat.icon }}"></i> {{ cat.name }}
+            </a>
+            {% endfor %}
+            <a href="{% url 'about' %}" class="cat-link"><i class="fas fa-info-circle"></i> About</a>
+            <a href="{% url 'contact' %}" class="cat-link"><i class="fas fa-headset"></i> Help</a>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+            <button class="close-btn">&times;</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>OCEANIX</h3>
+                    <p>India's trusted online store for everyday essentials. Quality products, best prices, fast delivery.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Shop</h4>
+                    <ul>
+                        <li><a href="{% url 'home' %}">All Products</a></li>
+                        <li><a href="{% url 'cart' %}">My Cart</a></li>
+                        <li><a href="{% url 'order_history' %}">Order History</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Payment Options</h4>
+                    <ul>
+                        <li><i class="fas fa-money-bill-wave"></i> Cash on Delivery</li>
+                        <li><i class="fas fa-mobile-alt"></i> UPI / GPay / PhonePe</li>
+                        <li><i class="fas fa-credit-card"></i> Cards & Net Banking</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Connect</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 OCEANIX. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

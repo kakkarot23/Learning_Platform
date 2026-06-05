@@ -1,0 +1,89 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}My Cart - OCEANIX{% endblock %}
+
+{% block content %}
+<div class="container cart-page">
+    <h1 class="page-title">My Cart <span class="item-count">({{ cart_items|length }} item{{ cart_items|length|pluralize }})</span></h1>
+
+    {% if cart_items %}
+    <div class="cart-layout">
+        <div class="cart-items-section">
+            {% for item in cart_items %}
+            <div class="cart-item-card">
+                <div class="cart-item-image">
+                    {% if item.product.image %}
+                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                    {% else %}
+                    <div class="no-image-small"><i class="fas fa-image"></i></div>
+                    {% endif %}
+                </div>
+
+                <div class="cart-item-details">
+                    <a href="{% url 'product_detail' item.product.id %}" class="cart-item-name">{{ item.product.name }}</a>
+                    {% if item.product.get_display_mrp %}
+                    <div class="price-row">
+                        <span class="selling-price">₹{{ item.product.price }}</span>
+                        <span class="mrp-price"><s>₹{{ item.product.get_display_mrp }}</s></span>
+                    </div>
+                    {% else %}
+                    <span class="selling-price">₹{{ item.product.price }}</span>
+                    {% endif %}
+                    <p class="delivery-tag"><i class="fas fa-bolt"></i> Delivery by tomorrow</p>
+
+                    <div class="cart-item-actions">
+                        <form method="post" action="{% url 'update_cart_item' item.id %}" class="qty-form">
+                            {% csrf_token %}
+                            <label>Qty:</label>
+                            <select name="quantity" onchange="this.form.submit()">
+                                {% for i in "12345678910"|make_list %}
+                                {% if forloop.counter <= item.product.stock %}
+                                <option value="{{ forloop.counter }}" {% if forloop.counter == item.quantity %}selected{% endif %}>{{ forloop.counter }}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </form>
+                        <a href="{% url 'remove_from_cart' item.id %}" class="remove-link" onclick="return confirm('Remove this item?')">REMOVE</a>
+                    </div>
+                </div>
+
+                <div class="cart-item-total">
+                    <span>₹{{ item.get_total_price }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="cart-summary-section">
+            <div class="summary-card sticky">
+                <h3>PRICE DETAILS</h3>
+                <div class="summary-row">
+                    <span>Price ({{ cart.get_total_items }} items)</span>
+                    <span>₹{{ cart.get_total_price }}</span>
+                </div>
+                <div class="summary-row">
+                    <span>Delivery Charges</span>
+                    <span class="free-text">FREE</span>
+                </div>
+                <div class="summary-divider"></div>
+                <div class="summary-row total">
+                    <span>Total Amount</span>
+                    <span class="total-amount">₹{{ cart.get_total_price }}</span>
+                </div>
+                <p class="savings-text">You will save on delivery!</p>
+                <a href="{% url 'checkout' %}" class="btn btn-buy btn-large">PLACE ORDER</a>
+                <a href="{% url 'home' %}" class="continue-link">Continue Shopping</a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="empty-cart">
+        <i class="fas fa-shopping-cart"></i>
+        <h2>Your cart is empty!</h2>
+        <p>Add items to it now.</p>
+        <a href="{% url 'home' %}" class="btn btn-primary">Shop Now</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

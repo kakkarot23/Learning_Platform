@@ -1,0 +1,65 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}My Orders - OCEANIX{% endblock %}
+
+{% block content %}
+<div class="container order-history-container">
+    <h1>My Orders</h1>
+    
+    {% if orders %}
+        <div class="orders-list">
+            {% for order in orders %}
+            <div class="order-card">
+                <div class="order-header">
+                    <div>
+                        <h3>Order {{ order.order_number }}</h3>
+                        <p class="order-date">{{ order.created_at | date:"d M, Y - H:i" }}</p>
+                    </div>
+                    <div class="order-status">
+                        <span class="status-badge status-{{ order.status }}">{{ order.get_status_display }}</span>
+                    </div>
+                </div>
+                
+                <div class="order-details-mini">
+                    <div class="detail">
+                        <span class="label">Items:</span>
+                        <span>{{ order.items.count }}</span>
+                    </div>
+                    <div class="detail">
+                        <span class="label">Total:</span>
+                        <span>₹{{ order.total_amount }}</span>
+                    </div>
+                    <div class="detail">
+                        <span class="label">Payment:</span>
+                        <span>{{ order.get_payment_status_display }}</span>
+                    </div>
+                </div>
+                
+                <div class="order-items-preview">
+                    <p><strong>Items:</strong></p>
+                    <ul>
+                        {% for item in order.items.all %}
+                        <li>{{ item.product.name }} x{{ item.quantity }} - ₹{{ item.get_total_price }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+                <div class="order-actions">
+                    <a href="{% url 'order_confirmation' order.id %}" class="btn btn-secondary">View Details</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-orders">
+            <div class="no-orders-icon">
+                <i class="fas fa-box"></i>
+            </div>
+            <h2>No Orders Yet</h2>
+            <p>You haven't placed any orders yet. Start shopping now!</p>
+            <a href="{% url 'home' %}" class="btn btn-primary">Shop Now</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

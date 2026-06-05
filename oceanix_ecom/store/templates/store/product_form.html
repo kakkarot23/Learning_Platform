@@ -1,0 +1,96 @@
+{% extends 'store/admin/base_admin.html' %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+    <h1><i class="fas fa-{% if product %}edit{% else %}plus{% endif %}"></i> {{ page_title }}</h1>
+    <a href="{% url 'admin_product_list' %}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+</div>
+
+<div class="admin-card">
+    <form method="post" enctype="multipart/form-data" class="admin-form product-admin-form">
+        {% csrf_token %}
+
+        <h3>Basic Information</h3>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Category</label>
+                {{ form.category }}
+            </div>
+            <div class="form-group">
+                <label>Product Name *</label>
+                {{ form.name }}
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Short Description</label>
+            {{ form.short_description }}
+        </div>
+        <div class="form-group">
+            <label>Full Description *</label>
+            {{ form.description }}
+        </div>
+        <div class="form-group">
+            <label>Highlights (one per line)</label>
+            {{ form.highlights }}
+        </div>
+
+        <h3>Pricing & Ratings</h3>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Selling Price (₹) *</label>
+                {{ form.price }}
+            </div>
+            <div class="form-group">
+                <label>MRP (₹)</label>
+                {{ form.mrp }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Discount %</label>
+                {{ form.discount_percent }}
+            </div>
+            <div class="form-group">
+                <label>Rating (0-5)</label>
+                {{ form.rating }}
+            </div>
+            <div class="form-group">
+                <label>Review Count</label>
+                {{ form.review_count }}
+            </div>
+        </div>
+
+        <h3>Inventory & Image</h3>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Stock Quantity *</label>
+                {{ form.stock }}
+            </div>
+            <div class="form-group">
+                <label>Product Image</label>
+                {{ form.image }}
+            </div>
+        </div>
+
+        {% if form.instance.image %}
+        <div class="form-group">
+            <label>Current Image</label>
+            <img src="{{ form.instance.image.url }}" style="max-width:200px;border-radius:8px;">
+        </div>
+        {% endif %}
+
+        <div class="form-group checkbox-row">
+            <label>{{ form.is_active }} Active (visible to customers)</label>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                {% if product %}Save Changes{% else %}Create Product{% endif %}
+            </button>
+            <a href="{% url 'admin_product_list' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

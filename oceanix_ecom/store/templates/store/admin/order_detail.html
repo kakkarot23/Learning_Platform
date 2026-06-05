@@ -1,0 +1,76 @@
+{% extends 'store/admin/base_admin.html' %}
+
+{% block title %}Order {{ order.order_number }}{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+    <h1>Order {{ order.order_number }}</h1>
+    <a href="{% url 'admin_order_list' %}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+</div>
+
+<div class="admin-grid-2">
+    <div class="admin-card">
+        <h2>Order Items</h2>
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order_items %}
+                <tr>
+                    <td>{{ item.product.name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>₹{{ item.price }}</td>
+                    <td>₹{{ item.get_total_price }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3" class="text-right"><strong>Total</strong></td>
+                    <td class="price-cell"><strong>₹{{ order.total_amount }}</strong></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <div class="admin-card">
+        <h2>Customer & Shipping</h2>
+        <div class="detail-list">
+            <div class="detail-row"><span>Name</span><span>{{ order.first_name }} {{ order.last_name }}</span></div>
+            <div class="detail-row"><span>Email</span><span>{{ order.email }}</span></div>
+            <div class="detail-row"><span>Phone</span><span>{{ order.phone }}</span></div>
+            <div class="detail-row"><span>Address</span><span>{{ order.address }}, {{ order.city }} - {{ order.postal_code }}, {{ order.country }}</span></div>
+            <div class="detail-row"><span>Payment</span><span>{{ order.get_payment_method_display }}</span></div>
+            <div class="detail-row"><span>Placed On</span><span>{{ order.created_at|date:"F d, Y h:i A" }}</span></div>
+        </div>
+    </div>
+</div>
+
+<div class="admin-card">
+    <h2>Update Order Status</h2>
+    <form method="post" class="admin-form">
+        {% csrf_token %}
+        <div class="form-row">
+            <div class="form-group">
+                <label>Order Status</label>
+                {{ form.status }}
+            </div>
+            <div class="form-group">
+                <label>Payment Status</label>
+                {{ form.payment_status }}
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Admin Notes</label>
+            {{ form.notes }}
+        </div>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Panel{% endblock %} - OCEANIX</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="admin-body">
+    <aside class="admin-sidebar">
+        <div class="admin-brand">
+            <a href="{% url 'admin_dashboard' %}">
+                <i class="fas fa-water"></i> OCEANIX
+            </a>
+            <span class="admin-badge">Admin Lite</span>
+        </div>
+        <nav class="admin-nav">
+            <a href="{% url 'admin_dashboard' %}" class="{% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
+                <i class="fas fa-chart-pie"></i> Dashboard
+            </a>
+            <a href="{% url 'admin_product_list' %}" class="{% if 'product' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fas fa-box"></i> Products
+            </a>
+            <a href="{% url 'add_product' %}" class="{% if request.resolver_match.url_name == 'add_product' %}active{% endif %}">
+                <i class="fas fa-plus-circle"></i> Add Product
+            </a>
+            <a href="{% url 'admin_order_list' %}" class="{% if 'order' in request.resolver_match.url_name and 'admin' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fas fa-shopping-bag"></i> Orders
+            </a>
+            <hr>
+            <a href="{% url 'home' %}"><i class="fas fa-store"></i> View Store</a>
+            <a href="/admin/" target="_blank"><i class="fas fa-cog"></i> Django Admin</a>
+            <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
+        <div class="admin-user">
+            <i class="fas fa-user-shield"></i>
+            <span>{{ user.username }}</span>
+        </div>
+    </aside>
+
+    <main class="admin-main">
+        {% if messages %}
+        <div class="admin-messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

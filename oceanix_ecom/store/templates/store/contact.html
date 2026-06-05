@@ -1,0 +1,75 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Contact Us - OCEANIX{% endblock %}
+
+{% block content %}
+<div class="container contact-container">
+    <h1>Contact Us</h1>
+    
+    <div class="contact-content">
+        <div class="contact-info">
+            <section class="contact-section">
+                <h2>Get in Touch</h2>
+                <p>Have questions or feedback? We'd love to hear from you! Contact us through any of the following channels.</p>
+            </section>
+            
+            <section class="contact-section">
+                <h3><i class="fas fa-envelope"></i> Email</h3>
+                <p><a href="mailto:support@oceanix.com">support@oceanix.com</a></p>
+            </section>
+            
+            <section class="contact-section">
+                <h3><i class="fas fa-phone"></i> Phone</h3>
+                <p><a href="tel:+911234567890">+91 123 456 7890</a></p>
+            </section>
+            
+            <section class="contact-section">
+                <h3><i class="fas fa-map-marker-alt"></i> Address</h3>
+                <p>
+                    OCEANIX Headquarters<br>
+                    123 Commerce Street<br>
+                    Business Park, City<br>
+                    Country - 123456
+                </p>
+            </section>
+            
+            <section class="contact-section">
+                <h3><i class="fas fa-clock"></i> Business Hours</h3>
+                <p>
+                    Monday - Friday: 9:00 AM - 6:00 PM<br>
+                    Saturday: 10:00 AM - 4:00 PM<br>
+                    Sunday: Closed
+                </p>
+            </section>
+        </div>
+        
+        <div class="contact-form-section">
+            <h2>Send us a Message</h2>
+            <form class="contact-form">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="subject">Subject</label>
+                    <input type="text" id="subject" name="subject" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" rows="5" required></textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-large">Send Message</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

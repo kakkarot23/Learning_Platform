@@ -1,0 +1,142 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Checkout - OCEANIX{% endblock %}
+
+{% block content %}
+<div class="container checkout-page">
+    <h1 class="page-title"><i class="fas fa-lock"></i> Secure Checkout</h1>
+
+    <form method="post" class="checkout-layout">
+        {% csrf_token %}
+
+        <div class="checkout-left">
+            <div class="checkout-card">
+                <h2><span class="step-num">1</span> Delivery Address</h2>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>First Name *</label>
+                        {{ form.first_name }}
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name *</label>
+                        {{ form.last_name }}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Email *</label>
+                        {{ form.email }}
+                    </div>
+                    <div class="form-group">
+                        <label>Phone *</label>
+                        {{ form.phone }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Address *</label>
+                    {{ form.address }}
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>City *</label>
+                        {{ form.city }}
+                    </div>
+                    <div class="form-group">
+                        <label>PIN Code *</label>
+                        {{ form.postal_code }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Country *</label>
+                    {{ form.country }}
+                </div>
+            </div>
+
+            <div class="checkout-card">
+                <h2><span class="step-num">2</span> Payment Method</h2>
+                <div class="payment-methods">
+                    {% for radio in form.payment_method %}
+                    <label class="payment-card" for="{{ radio.id_for_label }}">
+                        {{ radio.tag }}
+                        <div class="payment-card-content">
+                            {% if radio.choice_label == "Cash on Delivery" %}
+                            <i class="fas fa-money-bill-wave"></i>
+                            {% elif "UPI" in radio.choice_label %}
+                            <i class="fas fa-mobile-alt"></i>
+                            {% elif "Card" in radio.choice_label %}
+                            <i class="fas fa-credit-card"></i>
+                            {% elif "Net Banking" in radio.choice_label %}
+                            <i class="fas fa-university"></i>
+                            {% else %}
+                            <i class="fas fa-wallet"></i>
+                            {% endif %}
+                            <div>
+                                <strong>{{ radio.choice_label }}</strong>
+                                {% if radio.choice_label == "Cash on Delivery" %}
+                                <small>Pay when you receive</small>
+                                {% elif "UPI" in radio.choice_label %}
+                                <small>GPay, PhonePe, Paytm & more</small>
+                                {% elif "Card" in radio.choice_label %}
+                                <small>Visa, Mastercard, RuPay</small>
+                                {% elif "Net Banking" in radio.choice_label %}
+                                <small>All major banks supported</small>
+                                {% else %}
+                                <small>Paytm, PhonePe wallet</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="checkout-right">
+            <div class="summary-card sticky">
+                <h2>Price Details</h2>
+                <div class="summary-items">
+                    {% for item in cart_items %}
+                    <div class="summary-item-row">
+                        <div class="summary-item-info">
+                            <span class="item-name">{{ item.product.name|truncatechars:30 }}</span>
+                            <span class="item-qty">Qty: {{ item.quantity }}</span>
+                        </div>
+                        <span>₹{{ item.get_total_price }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="summary-divider"></div>
+
+                <div class="summary-row">
+                    <span>Price ({{ cart.get_total_items }} items)</span>
+                    <span>₹{{ cart.get_total_price }}</span>
+                </div>
+                <div class="summary-row">
+                    <span>Delivery Charges</span>
+                    <span class="free-text">FREE</span>
+                </div>
+
+                <div class="summary-divider"></div>
+
+                <div class="summary-row total">
+                    <span>Total Amount</span>
+                    <span class="total-amount">₹{{ cart.get_total_price }}</span>
+                </div>
+
+                <button type="submit" class="btn btn-buy btn-large place-order-btn">
+                    <i class="fas fa-lock"></i> PLACE ORDER
+                </button>
+
+                <p class="secure-note"><i class="fas fa-shield-alt"></i> Safe and Secure Payments</p>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
