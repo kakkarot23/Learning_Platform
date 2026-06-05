@@ -12,16 +12,28 @@ venv\Scripts\activate          # Windows
 
 pip install -r requirements.txt
 python manage.py migrate
-python manage.py createsuperuser
-python manage.py load_sample_products
+python manage.py setup_initial_data
 python manage.py runserver
 ```
+
+**Default admin login:** `admin` / `admin`
 
 | URL | Description |
 |-----|-------------|
 | http://127.0.0.1:8000/ | Storefront (shop) |
 | http://127.0.0.1:8000/panel/ | **Admin Lite Panel** (staff only) |
 | http://127.0.0.1:8000/admin/ | Django Admin (full backend) |
+
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [docs/IMPLEMENTATION_GUIDE.md](docs/IMPLEMENTATION_GUIDE.md) | Full setup commands & flowcharts |
+| [docs/PROJECT_FLOWCHARTS.md](docs/PROJECT_FLOWCHARTS.md) | All system flow diagrams |
+| [docs/DOCUMENTATION_INDEX.md](docs/DOCUMENTATION_INDEX.md) | Complete docs index |
+| [oceanix_ecom/README.md](oceanix_ecom/README.md) | Technical reference |
+
+**GitHub:** [https://github.com/kakkarot23/Oceanix](https://github.com/kakkarot23/Oceanix)
 
 ## Features
 

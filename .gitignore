@@ -7,7 +7,9 @@ venv/
 
 # Django
 db.sqlite3
-media/
+oceanix_ecom/media/*
+!oceanix_ecom/media/products/
+!oceanix_ecom/media/products/**
 staticfiles/
 
 # IDE

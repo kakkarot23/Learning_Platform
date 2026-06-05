@@ -14,7 +14,9 @@ ENV/
 dist/
 build/
 .DS_Store
-media/
+media/*
+!media/products/
+!media/products/**
 staticfiles/
 .idea/
 .vscode/
