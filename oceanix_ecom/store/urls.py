@@ -18,6 +18,7 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('about/', views.about, name='about'),
     path('contact/', views.contact, name='contact'),
+    path('developer/', views.developer_redirect, name='developer'),
 
     # Product CRUD (staff only, accessible from admin panel)
     path('product/add/', views.add_product, name='add_product'),

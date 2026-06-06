@@ -10,6 +10,12 @@ from django.db.models import Q, Sum, Count
 from .models import Product, Cart, CartItem, Order, OrderItem, Category
 from .forms import UserRegistrationForm, UserLoginForm, OrderForm, ProductForm, OrderStatusForm
 from .decorators import staff_required
+from django.http import HttpResponseRedirect
+
+
+def developer_redirect(request):
+    """Redirect to the Scholigence developer page."""
+    return HttpResponseRedirect('https://scholigence.com/developer')
 
 
 def get_or_create_cart(user):
