@@ -3,43 +3,217 @@
 
 {% block title %}About Us - OCEANIX{% endblock %}
 
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/about.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
-<div class="container about-container">
-    <h1>About OCEANIX</h1>
-    
-    <div class="about-content">
-        <section class="about-section">
-            <h2>Who We Are</h2>
-            <p>OCEANIX is a premium e-commerce platform dedicated to bringing you high-quality, innovative products for your everyday needs. We believe in delivering excellence, quality, and exceptional customer service.</p>
-        </section>
-        
-        <section class="about-section">
-            <h2>Our Mission</h2>
-            <p>Our mission is to provide customers with premium quality products at competitive prices, ensuring 100% authenticity and customer satisfaction. We are committed to making your shopping experience smooth, secure, and enjoyable.</p>
-        </section>
-        
-        <section class="about-section">
-            <h2>Our Values</h2>
-            <ul class="values-list">
-                <li><strong>Quality:</strong> We only sell authentic, high-quality products</li>
-                <li><strong>Customer Focus:</strong> Your satisfaction is our priority</li>
-                <li><strong>Transparency:</strong> Clear pricing and honest communication</li>
-                <li><strong>Innovation:</strong> Constantly improving our services</li>
-                <li><strong>Reliability:</strong> Fast shipping and excellent support</li>
-            </ul>
-        </section>
-        
-        <section class="about-section">
-            <h2>Why Choose OCEANIX?</h2>
-            <ul class="features-list">
-                <li><i class="fas fa-check"></i> Authentic, premium quality products</li>
-                <li><i class="fas fa-check"></i> Competitive pricing</li>
-                <li><i class="fas fa-check"></i> Fast and free shipping</li>
-                <li><i class="fas fa-check"></i> Secure payment options</li>
-                <li><i class="fas fa-check"></i> Easy returns and refunds</li>
-                <li><i class="fas fa-check"></i> 24/7 customer support</li>
-            </ul>
-        </section>
+<div class="about-page-wrapper">
+    <!-- ABOUT-SECTION-1: Hero -->
+    <div class="about-section-1">
+        <div class="inner-section">
+            <div class="image-wrapper">
+                <img width="2268" height="746" src="https://homeessentials.in/cdn/shop/files/About_main_bg.png?v=1759559831" alt="" class="image-desktop">
+                <div class="about-content">
+                    <h2 class="page-title">About Us</h2>
+                    <div class="humberg-menu">
+                        <a href="/">Home</a> > <span>About Us</span> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ABOUT-SECTION-2: Intro -->
+    <div class="about-section-2">
+        <div class="inner-section">
+            <div class="image-wrapper">
+                <img width="389" height="389" src="https://homeessentials.in/cdn/shop/files/Circle_he.png?v=1759560785" alt="">
+            </div>
+            <div class="rte-description">
+                <p><strong>OCEANIX</strong> is your trusted shop for functional, stylish, and affordable items for your humble abode. Tired of your living room’s same old look? Looking for budget-friendly items for a bedroom makeover? <strong>We are here to serve all your needs.</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ABOUT-SECTION-3: Our Story -->
+    <div class="about-section-3">
+        <div class="innner-section">
+            <div class="left-side">
+                <div class="swiper main-slider mySwiper">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <img width="754" height="922" src="https://homeessentials.in/cdn/shop/files/3_b76369e9-1801-43e4-a2c3-fa72d589adaa.png?v=1762421160" alt="">
+                        </div>
+                        <div class="swiper-slide">
+                            <img width="754" height="922" src="https://homeessentials.in/cdn/shop/files/1_8438c1ad-d7f1-420a-bd80-6cf5a4948823.png?v=1762421160" alt="">
+                        </div>
+                        <div class="swiper-slide">
+                            <img width="754" height="922" src="https://homeessentials.in/cdn/shop/files/2_891afdb2-010b-4fea-9ca1-fbf8dc0c19bd.png?v=1762421223" alt="">
+                        </div>
+                        <div class="swiper-slide">
+                            <img width="754" height="922" src="https://homeessentials.in/cdn/shop/files/Frame_2.png?v=1759563043" alt="">
+                        </div>
+                    </div>
+                    <div class="swiper-scrollbar"></div>
+                </div>
+            </div>
+            <div class="right-side">
+                <p class="caption">About</p>
+                <h3 class="title">OCEANIX</h3>
+                <div class="rte-desc">
+                    <h2>OCEANIX was born out of a simple realisation:</h2>
+                    <p>We believe Indian homes deserve to look better than average. We began as a small dream of modern living specialists and have grown into a nationwide movement now. We aim to reinvent modern living at low cost and turn your everyday moments into something extraordinary. We arrived to fill the gap between style, function, and affordability.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ABOUT-SECTION-4: Why Us -->
+    <div class="about-section-4">
+        <div class="inner-container">
+            <h2 class="main-title">Why OCEANIX?</h2>
+            <div class="rte-desc">
+                <p>We want your home to become an extension of your personality and taste. Our core values include quality, innovation, and genuine care for each customer. Every OCEANIX product is crafted to blend contemporary designs with usability. Hence, you don’t have to worry about buying pieces that serve practically no purpose in your home.</p>
+            </div>
+            <p class="hash">#ShopBeyondBasics</p>
+            <div class="icons-container">
+                <div class="icon-card">
+                    <div class="icon-wrapper">
+                        <img width="134" height="150" src="https://homeessentials.in/cdn/shop/files/dimond.svg?v=1759571252" alt="">
+                    </div>
+                    <div class="text-box">Quality</div>
+                </div>
+                <div class="icon-card">
+                    <div class="icon-wrapper">
+                        <img width="111" height="150" src="https://homeessentials.in/cdn/shop/files/bulb.svg?v=1759571252" alt="">
+                    </div>
+                    <div class="text-box">Innovation</div>
+                </div>
+                <div class="icon-card">
+                    <div class="icon-wrapper">
+                        <img width="141" height="125" src="https://homeessentials.in/cdn/shop/files/heart.svg?v=1759571252" alt="">
+                    </div>
+                    <div class="text-box">Genuine Care</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ABOUT-SECTION-6: Milestones -->
+    <div class="about-section-6">
+        <div class="inner-container">
+            <div class="left-side">
+                <h2 class="title">OCEANIX Milestones</h2>
+                <p class="sub-title">Where Are We Today</p>
+                <div class="rte-desc">
+                    <p>What started as a small dedicated startup has become a dynamic team of 100+ innovators today. Below is what our seismic growth has looked like:</p>
+                </div>
+            </div>
+            <div class="right-side">
+                <div class="single-box">
+                    <h3 class="title">10 Lakh +</h3>
+                    <p class="desc">Happy Customers</p>
+                </div>
+                <div class="single-box">
+                    <h3 class="title">1700 +</h3>
+                    <p class="desc">Products</p>
+                </div>
+                <div class="single-box">
+                    <h3 class="title">25 +</h3>
+                    <p class="desc">Categories</p>
+                </div>
+                <div class="single-box">
+                    <h3 class="title">02</h3>
+                    <p class="desc">Exclusive Brand Stores</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ABOUT-SECTION-7: Press -->
+    <div class="about-section-7">
+        <div class="inner-container">
+            <div class="left-side">
+                <h2 class="title">In The Press</h2>
+                <div class="rte-desc">
+                    <p>Our brand and founders have featured in leading Indian news publications. Our success has sent ripples into the business world, too, with mentions and interviews in national financial journals and startup story portals. Despite our growing reach and recognition in the media, our core values and goals remain unchanged. We are a customer-first brand. Hence, customer satisfaction and reviews are the key parameters of success for us.</p>
+                </div>
+            </div>
+            <div class="right-side">
+                <img src="https://homeessentials.in/cdn/shop/files/Brand_Wagon_4th.png?v=1762421039" alt="">
+            </div>
+        </div>
+    </div>
+
+    <!-- ABOUT-SECTION-8: Social Links -->
+    <div class="about-section-8">
+        <div class="inner-container">
+            <h2 class="main-title">Join Us on Social Media</h2>
+            <div class="social-media-links">
+                <a class="link-container" href="#" target="_blank">
+                    <i class="fab fa-instagram"></i>
+                    <span class="text-box">Instagram</span>
+                </a>
+                <a class="link-container" href="#" target="_blank">
+                    <i class="fab fa-linkedin-in"></i>
+                    <span class="text-box">LinkedIn</span>
+                </a>
+                <a class="link-container" href="#" target="_blank">
+                    <i class="fab fa-youtube"></i>
+                    <span class="text-box">YouTube</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ABOUT-SECTION-9: Store Locations -->
+    <div class="about-section-9">
+        <div class="inner-container">
+            <div class="left-side">
+                <h2 class="main-title">Our Brand Stores</h2>
+                <div class="rte-desc">
+                    <p>Experience OCEANIX in store near you with two new brand stores to help you get started with your home organization project. Visit us in Greater Noida or Gurgaon to explore our full collection in person and get personalized recommendations from our experts. Drop by anytime to touch, feel, and fall in love with products designed just for you and your homes.</p>
+                </div>
+            </div>
+            <div class="right-side">
+                <div class="store-card">
+                    <img src="https://homeessentials.in/cdn/shop/files/PCP_7342.jpg?v=1776945422" alt="">
+                    <div class="details">
+                        <h4 class="title">Greater Noida Store</h4>
+                        <p class="rte-address">Gaur City Mall, Greater Noida West, Uttar Pradesh</p>
+                    </div>
+                </div>
+                <div class="store-card">
+                    <img src="https://homeessentials.in/cdn/shop/files/PCP_7342.jpg?v=1776945422" alt="">
+                    <div class="details">
+                        <h4 class="title">Gurgaon Store</h4>
+                        <p class="rte-address">Elan Miracle Mall, Sector 84, Dwarka Expressway, Gurgaon</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+    var swiper = new Swiper(".mySwiper", {
+        slidesPerView: 1.5,
+        spaceBetween: 20,
+        scrollbar: {
+            el: ".swiper-scrollbar",
+            hide: false,
+        },
+        breakpoints: {
+            768: {
+                slidesPerView: 2,
+            }
+        }
+    });
+</script>
 {% endblock %}

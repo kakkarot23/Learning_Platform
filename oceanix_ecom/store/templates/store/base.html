@@ -7,50 +7,68 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- Top Header Bar -->
-    <header class="top-header">
+    <!-- Announcement Bar -->
+    <div class="announcement-bar">
+        <div class="container announcement-bar-inner">
+            <div class="announcement-text">
+                <i class="fas fa-truck"></i> Free Shipping on orders above ₹499 | <i class="fas fa-wallet"></i> Cash on Delivery (COD) Available
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Header -->
+    <header class="main-header">
         <div class="container header-inner">
-            <a href="{% url 'home' %}" class="logo">
-                <i class="fas fa-water"></i>
-                <span>OCEANIX</span>
-            </a>
+            <div class="header-left">
+                <a href="{% url 'home' %}" class="logo">
+                    <span class="logo-accent"><i class="fas fa-water"></i></span>
+                    <span>OCEANIX</span>
+                </a>
+            </div>
 
-            <form method="get" action="{% url 'home' %}" class="header-search">
-                <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Search for products, brands and more...">
-                <button type="submit"><i class="fas fa-search"></i></button>
-            </form>
+            <div class="header-center">
+                <form method="get" action="{% url 'home' %}" class="header-search">
+                    <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Search for products, brands and more...">
+                    <button type="submit"><i class="fas fa-search"></i></button>
+                </form>
+            </div>
 
-            <div class="header-actions">
-                {% if user.is_authenticated %}
-                    {% if user.is_staff %}
-                    <a href="{% url 'admin_dashboard' %}" class="header-action" title="Admin Panel">
-                        <i class="fas fa-user-shield"></i>
-                        <span>Admin</span>
-                    </a>
+            <div class="header-right">
+                <div class="header-actions">
+                    {% if user.is_authenticated %}
+                        {% if user.is_staff %}
+                        <a href="{% url 'admin_dashboard' %}" class="header-action" title="Admin Panel">
+                            <i class="fas fa-user-shield"></i>
+                            <span class="action-label">Admin</span>
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'order_history' %}" class="header-action">
+                            <i class="fas fa-box"></i>
+                            <span class="action-label">Orders</span>
+                        </a>
+                        <a href="{% url 'cart' %}" class="header-action cart-action">
+                            <div class="cart-icon-wrapper">
+                                <i class="fas fa-shopping-bag"></i>
+                                {% if cart_count %}<span class="cart-badge">{{ cart_count }}</span>{% endif %}
+                            </div>
+                            <span class="action-label">Cart</span>
+                        </a>
+                        <div class="header-user-menu">
+                            <i class="fas fa-user-circle"></i>
+                            <span class="user-name">{{ user.first_name|default:user.username }}</span>
+                            <a href="{% url 'logout' %}" class="logout-link" title="Logout"><i class="fas fa-sign-out-alt"></i></a>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="header-action">
+                            <i class="fas fa-user"></i>
+                            <span class="action-label">Login</span>
+                        </a>
+                        <a href="{% url 'register' %}" class="btn-signup">Sign Up</a>
                     {% endif %}
-                    <a href="{% url 'order_history' %}" class="header-action">
-                        <i class="fas fa-box"></i>
-                        <span>Orders</span>
-                    </a>
-                    <a href="{% url 'cart' %}" class="header-action cart-action">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span>Cart</span>
-                        {% if cart_count %}<span class="cart-badge">{{ cart_count }}</span>{% endif %}
-                    </a>
-                    <div class="header-user">
-                        <i class="fas fa-user-circle"></i>
-                        <span>{{ user.first_name|default:user.username }}</span>
-                        <a href="{% url 'logout' %}" class="logout-link">Logout</a>
-                    </div>
-                {% else %}
-                    <a href="{% url 'login' %}" class="header-action">
-                        <i class="fas fa-sign-in-alt"></i>
-                        <span>Login</span>
-                    </a>
-                    <a href="{% url 'register' %}" class="btn-register-header">Sign Up</a>
-                {% endif %}
+                </div>
             </div>
         </div>
     </header>
@@ -59,32 +77,32 @@
     <nav class="category-bar">
         <div class="container category-inner">
             <a href="{% url 'home' %}" class="cat-link {% if not active_category %}active{% endif %}">
-                <i class="fas fa-th"></i> All
+                <i class="fas fa-border-all"></i> All Products
             </a>
             {% for cat in categories %}
             <a href="{% url 'home' %}?category={{ cat.slug }}" class="cat-link {% if active_category == cat.slug %}active{% endif %}">
                 <i class="fas {{ cat.icon }}"></i> {{ cat.name }}
             </a>
             {% endfor %}
-            <a href="{% url 'about' %}" class="cat-link"><i class="fas fa-info-circle"></i> About</a>
-            <a href="{% url 'contact' %}" class="cat-link"><i class="fas fa-headset"></i> Help</a>
+            <a href="{% url 'about' %}" class="cat-link"><i class="fas fa-info-circle"></i> About Us</a>
+            <a href="{% url 'contact' %}" class="cat-link"><i class="fas fa-envelope"></i> Contact Us</a>
         </div>
     </nav>
 
     <!-- Messages -->
     {% if messages %}
-    <div class="messages-container">
+    <div class="container messages-container">
         {% for message in messages %}
         <div class="alert alert-{{ message.tags }}">
-            {{ message }}
-            <button class="close-btn">&times;</button>
+            <span class="alert-message">{{ message }}</span>
+            <button class="close-btn" onclick="this.parentElement.style.display='none';">&times;</button>
         </div>
         {% endfor %}
     </div>
     {% endif %}
 
     <!-- Main Content -->
-    <main>
+    <main class="main-content-area">
         {% block content %}{% endblock %}
     </main>
 
@@ -94,35 +112,44 @@
             <div class="footer-content">
                 <div class="footer-section">
                     <h3>OCEANIX</h3>
-                    <p>India's trusted online store for everyday essentials. Quality products, best prices, fast delivery.</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Shop</h4>
-                    <ul>
-                        <li><a href="{% url 'home' %}">All Products</a></li>
-                        <li><a href="{% url 'cart' %}">My Cart</a></li>
-                        <li><a href="{% url 'order_history' %}">Order History</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Payment Options</h4>
-                    <ul>
-                        <li><i class="fas fa-money-bill-wave"></i> Cash on Delivery</li>
-                        <li><i class="fas fa-mobile-alt"></i> UPI / GPay / PhonePe</li>
-                        <li><i class="fas fa-credit-card"></i> Cards & Net Banking</li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Connect</h4>
+                    <p class="footer-desc">Your trusted destination for premium quality and affordable home organization, kitchen essentials, and daily home items.</p>
                     <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="{% url 'home' %}">Shop All</a></li>
+                        <li><a href="{% url 'about' %}">About Us</a></li>
+                        <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                        <li><a href="{% url 'order_history' %}">My Orders</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Help & Support</h4>
+                    <ul>
+                        <li><a href="#">Shipping Policy</a></li>
+                        <li><a href="#">Returns & Refund Policy</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Payment & Trust</h4>
+                    <p class="trust-desc">We support standard secure payment options including UPI, Net Banking, and major Debit/Credit Cards.</p>
+                    <div class="payment-badges">
+                        <span class="payment-badge" title="Cash on Delivery"><i class="fas fa-money-bill-wave"></i> COD</span>
+                        <span class="payment-badge" title="UPI Payment"><i class="fas fa-mobile-alt"></i> UPI</span>
+                        <span class="payment-badge" title="Secure Card Payment"><i class="fas fa-credit-card"></i> Cards</span>
                     </div>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2026 OCEANIX. All rights reserved.</p>
+                <p>&copy; 2026 OCEANIX. All rights reserved. Designed for affordable home organization.</p>
             </div>
         </div>
     </footer>

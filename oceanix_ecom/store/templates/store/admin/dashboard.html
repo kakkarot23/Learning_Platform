@@ -17,6 +17,14 @@
             <span class="stat-sub">{{ active_products }} active</span>
         </div>
     </div>
+    <div class="stat-card stat-blue" style="border-left-color: var(--primary-dark);">
+        <div class="stat-icon"><i class="fas fa-boxes-stacked"></i></div>
+        <div class="stat-info">
+            <span class="stat-value">{{ total_stock }}</span>
+            <span class="stat-label">Products in Hand</span>
+            <span class="stat-sub"><a href="{% url 'admin_inventory' %}" style="color: var(--primary-color); text-decoration: none; font-weight: 500;">Manage Inventory &rarr;</a></span>
+        </div>
+    </div>
     <div class="stat-card stat-green">
         <div class="stat-icon"><i class="fas fa-shopping-bag"></i></div>
         <div class="stat-info">
@@ -78,7 +86,7 @@
     <div class="admin-card">
         <div class="admin-card-header">
             <h2>Low Stock Alert</h2>
-            <a href="{% url 'admin_product_list' %}">Manage Products</a>
+            <a href="{% url 'admin_inventory' %}">Manage Inventory</a>
         </div>
         {% if low_stock %}
         <table class="admin-table">

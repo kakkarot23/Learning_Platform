@@ -1,110 +1,177 @@
-# OCEANIX
+# 🌊 OCEANIX — Premium Home Organisation & Kitchen Store
 
-**E-commerce web portal for everyday essentials** — built with Django, featuring an Amazon/Flipkart-style storefront, shopping cart, multi-payment checkout, and a custom Admin Lite panel.
+> **Good Quality & Affordable Home Organization, Kitchen – Home Essentials**
 
-## Quick Start
+OCEANIX is a full-featured Django e-commerce web application for premium home organisation and kitchen essentials. It features a modern blue-themed storefront, a complete shopping cart & order flow, and a dedicated **Super Admin Panel** with inventory management, order tracking, and printable invoices.
+
+---
+
+## 🖼️ Screenshots
+
+### 🏠 Home / Storefront
+![Home Page](docs/screenshots/home_full.png)
+
+### 🔝 Hero Section & Category Filters
+![Home Hero](docs/screenshots/home_hero.png)
+
+### 📄 Homepage (scrolled)
+![Homepage Scrolled](docs/screenshots/home_scrolled.png)
+
+### ℹ️ About Page
+![About Page](docs/screenshots/about.png)
+
+### 📞 Contact Page
+![Contact Page](docs/screenshots/contact.png)
+
+### 🔐 Admin Login Portal
+![Admin Login](docs/screenshots/admin_login_full.png)
+
+---
+
+## ✨ Features
+
+### 🛒 Storefront
+- Modern, premium blue-themed UI inspired by leading home-goods retailers
+- Responsive header with announcement bar, search, login/signup
+- Category filter tabs (Drinkware, Home Essentials, Kitchen, Lunch Boxes)
+- Product cards with discount badges, star ratings, pricing, and delivery info
+- Out-of-Stock indicators — automatically shown when stock reaches 0
+- Cart & checkout with Cash on Delivery (COD) support
+
+### 🔑 Super Admin Panel (`/panel/`)
+| Feature | URL |
+|---|---|
+| Admin Login | `/panel/login/` |
+| Dashboard | `/panel/` |
+| Order List | `/panel/orders/` |
+| Order Detail | `/panel/orders/<id>/` |
+| Printable Invoice | `/panel/orders/<id>/bill/` |
+| Inventory Management | `/panel/inventory/` |
+
+- **Separate Admin Login** — Navigate to `/panel/login/` and log in with `admin` / `admin`
+- **Dashboard** — Summary cards: Total Orders, Total Revenue, Pending Orders, **Total Products in Hand** (stock aggregation)
+- **Inventory Management** — Inline stock and price editing; quick-adjust buttons (+5, +10, −1, Out of Stock)
+- **Order Management** — View all orders, update statuses, filter by date/status
+- **Printable Invoice** — Print-optimised bill format with customer details, itemised list, totals, and tax
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Python 3.10+
+- pip
+
+### Installation
 
 ```bash
-cd oceanix_ecom
-python -m venv venv
-venv\Scripts\activate          # Windows
-# source venv/bin/activate     # macOS/Linux
+# 1. Clone the repository
+git clone https://github.com/kakkarot23/Oceanix.git
+cd Oceanix
 
+# 2. Create & activate virtual environment
+python -m venv venv
+venv\Scripts\activate       # Windows
+# source venv/bin/activate  # macOS/Linux
+
+# 3. Install dependencies
 pip install -r requirements.txt
+
+# 4. Apply migrations
+cd oceanix_ecom
 python manage.py migrate
-python manage.py setup_initial_data
+
+# 5. (Optional) Load sample data / create superuser
+python manage.py createsuperuser
+
+# 6. Run the development server
 python manage.py runserver
 ```
 
-**Default admin login:** `admin` / `admin`
+Then open **http://127.0.0.1:8000/** in your browser.
 
-| URL | Description |
-|-----|-------------|
-| http://127.0.0.1:8000/ | Storefront (shop) |
-| http://127.0.0.1:8000/panel/ | **Admin Lite Panel** (staff only) |
-| http://127.0.0.1:8000/admin/ | Django Admin (full backend) |
+---
 
-## Documentation
+## 🔐 Admin Access
 
-| Document | Description |
-|----------|-------------|
-| [docs/IMPLEMENTATION_GUIDE.md](docs/IMPLEMENTATION_GUIDE.md) | Full setup commands & flowcharts |
-| [docs/PROJECT_FLOWCHARTS.md](docs/PROJECT_FLOWCHARTS.md) | All system flow diagrams |
-| [docs/DOCUMENTATION_INDEX.md](docs/DOCUMENTATION_INDEX.md) | Complete docs index |
-| [oceanix_ecom/README.md](oceanix_ecom/README.md) | Technical reference |
+| URL | Credentials |
+|---|---|
+| `/panel/login/` | `admin` / `admin` |
+| `/admin/` (Django admin) | Superuser account |
 
-**GitHub:** [https://github.com/kakkarot23/Oceanix](https://github.com/kakkarot23/Oceanix)
+> The panel login auto-creates & authenticates an `admin` superuser account on first use.
 
-## Features
+---
 
-### Storefront (Customer)
-- Flipkart/Amazon-inspired UI with category navigation
-- Product search, ratings, MRP/discount display
-- Detailed product pages with description, highlights, and payment info tabs
-- Shopping cart with quantity management
-- Checkout with **5 payment options**: COD, UPI, Card, Net Banking, Wallet
-- Order history and confirmation
-
-### Admin Lite Panel (`/panel/`)
-- Dashboard with sales stats, recent orders, low-stock alerts
-- **Product CRUD**: Add, edit, delete products with images
-- Order management with status updates
-- Staff-only access (set `is_staff=True` on your user)
-
-### Django Admin (`/admin/`)
-- Full database management for products, orders, carts, categories
-
-## Project Structure
+## 📁 Project Structure
 
 ```
-oceanix_ecom/
-├── oceanix/          # Django project settings
-├── store/            # Main app
-│   ├── models.py     # Product, Category, Cart, Order
-│   ├── views.py      # Storefront + Admin Lite views
-│   ├── templates/    # HTML templates
-│   │   └── store/admin/  # Admin Lite panel templates
-│   ├── static/css/   # style.css + admin.css
-│   └── management/commands/load_sample_products.py
-├── manage.py
-└── requirements.txt
+OCEANIX/
+├── oceanix_ecom/
+│   ├── manage.py
+│   ├── oceanix_ecom/       # Django project settings
+│   └── store/              # Main e-commerce app
+│       ├── models.py       # Product, Order, Cart, Category models
+│       ├── views.py        # Storefront + Admin views
+│       ├── urls.py         # URL routing
+│       ├── decorators.py   # staff_required decorator
+│       ├── forms.py        # Login, Registration, Order forms
+│       ├── static/css/     # Custom CSS (style.css, about.css)
+│       └── templates/store/
+│           ├── base.html           # Global layout
+│           ├── home.html           # Storefront homepage
+│           ├── about.html          # About page
+│           └── admin/
+│               ├── base_admin.html # Admin layout
+│               ├── login.html      # Admin login portal
+│               ├── dashboard.html  # Admin dashboard
+│               ├── order_list.html # Orders management
+│               ├── order_detail.html
+│               ├── order_bill.html # Printable invoice
+│               └── inventory.html  # Inventory management
+├── docs/
+│   └── screenshots/        # Page screenshots for README
+└── README.md
 ```
 
-## Admin Setup
+---
 
-After creating a superuser, you automatically get staff access:
+## 🛠️ Tech Stack
 
-```bash
-python manage.py createsuperuser
-```
+| Layer | Technology |
+|---|---|
+| Backend | Django 4.2 |
+| Database | SQLite (development) |
+| Frontend | HTML5, Vanilla CSS, JavaScript |
+| Icons | Font Awesome 6 |
+| Fonts | Google Fonts — Inter |
+| Payments | Cash on Delivery (COD), UPI, Cards (display) |
 
-Login at `/panel/` or `/admin/` with those credentials.
+---
 
-## Payment Methods
+## 📦 Key Django Models
 
-| Method | Description |
-|--------|-------------|
-| Cash on Delivery | Pay when product is delivered |
-| UPI | GPay, PhonePe, Paytm |
-| Credit/Debit Card | Visa, Mastercard, RuPay |
-| Net Banking | All major Indian banks |
-| Wallet | Paytm, PhonePe wallet |
+| Model | Description |
+|---|---|
+| `Product` | Name, price, stock, category, images, discount |
+| `Category` | Slug-based product categories |
+| `Cart` | User cart session |
+| `CartItem` | Line items in a cart |
+| `Order` | Customer order with address & payment info |
+| `OrderItem` | Products within an order |
 
-> Payment gateway integration (Razorpay/Stripe) can be added for live transactions.
+---
 
-## Documentation
+## 🤝 Contributing
 
-- [oceanix_ecom/README.md](oceanix_ecom/README.md) — Full technical documentation
-- [oceanix_ecom/SETUP_GUIDE.txt](oceanix_ecom/SETUP_GUIDE.txt) — Step-by-step setup
-- [oceanix_ecom/FEATURES.md](oceanix_ecom/FEATURES.md) — Feature list
+Pull requests are welcome. For major changes, please open an issue first to discuss what you'd like to change.
 
-## Tech Stack
+---
 
-- **Backend**: Django 4.2
-- **Database**: SQLite (production: PostgreSQL)
-- **Frontend**: HTML5, CSS3, JavaScript, Font Awesome
-- **Images**: Pillow
+## 📄 License
 
-## License
+This project is for educational/portfolio purposes.
 
-MIT License
+---
+
+*Built with ❤️ using Django — OCEANIX © 2026*

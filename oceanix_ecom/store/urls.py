@@ -25,8 +25,12 @@ urlpatterns = [
     path('product/<int:pk>/delete/', views.delete_product, name='delete_product'),
 
     # Admin Lite Panel
+    path('panel/login/', views.admin_login_view, name='admin_login'),
     path('panel/', views.admin_dashboard, name='admin_dashboard'),
     path('panel/products/', views.admin_product_list, name='admin_product_list'),
+    path('panel/inventory/', views.admin_inventory, name='admin_inventory'),
+    path('panel/inventory/update/<int:pk>/', views.admin_inventory_update, name='admin_inventory_update'),
     path('panel/orders/', views.admin_order_list, name='admin_order_list'),
     path('panel/orders/<int:pk>/', views.admin_order_detail, name='admin_order_detail'),
+    path('panel/orders/<int:pk>/bill/', views.admin_order_bill, name='admin_order_bill'),
 ]

@@ -1,86 +1,153 @@
 {% extends 'store/base.html' %}
 {% load static %}
 
-{% block title %}OCEANIX - Shop Online for Best Deals{% endblock %}
+{% block title %}OCEANIX - Good Quality & Affordable Home Organization & Kitchen Essentials{% endblock %}
 
 {% block content %}
-<!-- Promo Banner -->
-<section class="promo-banner">
-    <div class="container">
-        <div class="promo-content">
-            <div class="promo-text">
-                <h1>Great Deals on Everyday Essentials</h1>
-                <p>Free delivery on orders above ₹499 | Easy returns | 100% genuine products</p>
+<!-- Circular Category Nav -->
+<section class="circular-category-sec">
+    <div class="container circles-container">
+        <a href="{% url 'home' %}" class="circle-item {% if not active_category %}active{% endif %}">
+            <div class="circle-img-wrapper">
+                <i class="fas fa-border-all"></i>
             </div>
-            <div class="promo-badges">
-                <span><i class="fas fa-truck"></i> Free Delivery</span>
-                <span><i class="fas fa-shield-alt"></i> Secure Payment</span>
-                <span><i class="fas fa-undo"></i> Easy Returns</span>
+            <span class="circle-label">All</span>
+        </a>
+        {% for cat in categories %}
+        <a href="{% url 'home' %}?category={{ cat.slug }}" class="circle-item {% if active_category == cat.slug %}active{% endif %}">
+            <div class="circle-img-wrapper">
+                <i class="fas {{ cat.icon }}"></i>
+            </div>
+            <span class="circle-label">{{ cat.name }}</span>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Hero Slider / Banner Section -->
+<section class="hero-slider-sec">
+    <div class="container">
+        <div class="hero-card-slider">
+            <div class="hero-slide active">
+                <div class="hero-slide-overlay" style="background: linear-gradient(135deg, rgba(15,43,92,0.95) 0%, rgba(30,98,212,0.85) 100%);"></div>
+                <div class="hero-slide-content">
+                    <span class="slide-badge"><i class="fas fa-magic"></i> Home Revamp Sale</span>
+                    <h1>Organise Your Spaces Effortlessly</h1>
+                    <p>Discover high-quality, durable, and highly functional kitchen storage, modular spice racks, premium drinkware, and school lunch boxes designed for modern homes.</p>
+                    <div class="hero-buttons">
+                        <a href="?category=home-essentials" class="btn btn-hero-primary">Explore Organizers</a>
+                        <a href="?category=kitchen" class="btn btn-hero-secondary">Kitchen Collection</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Products Section -->
-<section class="products-section">
+<!-- Marketing Features Bar -->
+<section class="features-bar-sec">
+    <div class="container features-inner-grid">
+        <div class="feature-item">
+            <div class="feature-icon"><i class="fas fa-shipping-fast"></i></div>
+            <div class="feature-text">
+                <strong>Free Delivery</strong>
+                <span>On all orders above ₹499</span>
+            </div>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon"><i class="fas fa-wallet"></i></div>
+            <div class="feature-text">
+                <strong>Cash on Delivery</strong>
+                <span>COD available at check-out</span>
+            </div>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+            <div class="feature-text">
+                <strong>Genuine Quality</strong>
+                <span>100% inspected home essentials</span>
+            </div>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon"><i class="fas fa-undo"></i></div>
+            <div class="feature-text">
+                <strong>Easy Returns</strong>
+                <span>7 days simple return window</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Collection Filter & Product Showcase -->
+<section class="collection-showcase-sec">
     <div class="container">
-        <div class="section-header">
-            <h2>{% if query %}Results for "{{ query }}"{% elif active_category %}Category Products{% else %}Top Deals for You{% endif %}</h2>
-            <span class="product-count">{{ products|length }} product{{ products|length|pluralize }}</span>
+        <div class="collection-header">
+            <h2 class="section-title">Our Top Collections</h2>
+            <p class="section-subtitle">Premium Quality & Affordable Home Organization & Kitchen Essentials</p>
+            <div class="collection-filter-tabs">
+                <button class="filter-tab-btn {% if not active_category %}active{% endif %}" data-category="all">All Products</button>
+                {% for cat in categories %}
+                <button class="filter-tab-btn {% if active_category == cat.slug %}active{% endif %}" data-category="{{ cat.slug }}">{{ cat.name }}</button>
+                {% endfor %}
+            </div>
         </div>
 
         {% if products %}
-        <div class="products-grid">
+        <div class="shopify-products-grid" id="productsGrid">
             {% for product in products %}
-            <div class="product-card">
+            <div class="shopify-product-card" data-category="{{ product.category.slug }}">
+                <!-- Badge Overlay -->
                 {% if product.get_discount_percent %}
-                <span class="discount-badge">{{ product.get_discount_percent }}% OFF</span>
+                <div class="card-badge discount">{{ product.get_discount_percent }}% OFF</div>
+                {% elif product.rating >= 4.5 %}
+                <div class="card-badge best-seller">BEST SELLER</div>
                 {% endif %}
 
-                <a href="{% url 'product_detail' product.id %}" class="product-image">
+                <!-- Product Image -->
+                <a href="{% url 'product_detail' product.id %}" class="card-image-wrapper">
                     {% if product.image %}
-                        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy" class="card-product-img">
                     {% else %}
-                        <div class="no-image"><i class="fas fa-image"></i></div>
+                        <div class="no-image-placeholder"><i class="fas fa-image"></i></div>
                     {% endif %}
                 </a>
 
-                <div class="product-info">
-                    <a href="{% url 'product_detail' product.id %}" class="product-title">{{ product.name }}</a>
-
-                    {% if product.short_description %}
-                    <p class="product-short">{{ product.short_description|truncatechars:60 }}</p>
-                    {% endif %}
-
-                    <div class="product-rating">
-                        <span class="rating-badge"><i class="fas fa-star"></i> {{ product.rating }}</span>
-                        <span class="review-count">({{ product.review_count }})</span>
+                <!-- Product Info -->
+                <div class="card-info-wrapper">
+                    <span class="card-category-label">{{ product.category.name|upper }}</span>
+                    <a href="{% url 'product_detail' product.id %}" class="card-title-link" title="{{ product.name }}">{{ product.name }}</a>
+                    
+                    <div class="card-rating-row">
+                        <div class="stars-gold">
+                            <i class="fas fa-star"></i> {{ product.rating }}
+                        </div>
+                        <span class="card-reviews-count">({{ product.review_count }} reviews)</span>
                     </div>
 
-                    <div class="price-row">
-                        <span class="selling-price">₹{{ product.price }}</span>
+                    <div class="card-price-row">
+                        <span class="card-sale-price">₹{{ product.price }}</span>
                         {% if product.get_display_mrp %}
-                        <span class="mrp-price">₹{{ product.get_display_mrp }}</span>
+                        <span class="card-mrp-price">₹{{ product.get_display_mrp }}</span>
                         {% endif %}
                     </div>
 
                     {% if product.stock > 0 %}
-                    <p class="delivery-tag"><i class="fas fa-bolt"></i> Free delivery by tomorrow</p>
+                    <p class="card-delivery-tag"><i class="fas fa-bolt"></i> Free delivery by tomorrow</p>
                     {% else %}
-                    <p class="stock-tag out">Out of Stock</p>
+                    <p class="card-stock-tag out">Out of Stock</p>
                     {% endif %}
 
-                    <div class="product-actions">
+                    <div class="card-action-btn-wrapper">
                         {% if user.is_authenticated and product.stock > 0 %}
-                        <form method="post" action="{% url 'add_to_cart' product.id %}" class="quick-add">
+                        <form method="post" action="{% url 'add_to_cart' product.id %}" class="card-quick-add-form">
                             {% csrf_token %}
                             <input type="hidden" name="quantity" value="1">
-                            <button type="submit" class="btn btn-cart"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+                            <button type="submit" class="btn btn-atc-card"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
                         </form>
                         {% elif not user.is_authenticated %}
-                        <a href="{% url 'login' %}?next={% url 'product_detail' product.id %}" class="btn btn-cart">Login to Buy</a>
+                        <a href="{% url 'login' %}?next={% url 'product_detail' product.id %}" class="btn btn-atc-card btn-login-to-buy"><i class="fas fa-sign-in-alt"></i> Login to Buy</a>
                         {% else %}
-                        <button class="btn btn-disabled" disabled>Out of Stock</button>
+                        <button class="btn btn-atc-card out-of-stock" disabled>Out of Stock</button>
                         {% endif %}
                     </div>
                 </div>
@@ -88,13 +155,115 @@
             {% endfor %}
         </div>
         {% else %}
-        <div class="no-products">
-            <i class="fas fa-search"></i>
+        <div class="shopify-no-products">
+            <i class="fas fa-search-minus"></i>
             <h3>No products found</h3>
-            <p>Try a different search or browse all categories.</p>
-            <a href="{% url 'home' %}" class="btn btn-primary">View All Products</a>
+            <p>Try searching another keyword or exploring other collections.</p>
+            <a href="{% url 'home' %}" class="btn btn-secondary">View All Products</a>
         </div>
         {% endif %}
     </div>
 </section>
+
+<!-- Dual Marketing Banner Grid -->
+<section class="banner-grid-sec">
+    <div class="container">
+        <div class="banner-grid">
+            <div class="grid-banner-card" style="background: linear-gradient(135deg, rgba(15,43,92,0.9) 0%, rgba(30,98,212,0.7) 100%), url('https://homeessentials.in/cdn/shop/files/PCP_7342.jpg?v=1776945422') center/cover;">
+                <div class="banner-card-content">
+                    <h3>Premium Drinkware</h3>
+                    <p>Upgrade to leak-proof, food-grade steel bottles and premium glass tumblers.</p>
+                    <a href="?category=drinkware" class="btn btn-banner">Shop Drinkware <i class="fas fa-chevron-right"></i></a>
+                </div>
+            </div>
+            <div class="grid-banner-card" style="background: linear-gradient(135deg, rgba(15,43,92,0.9) 0%, rgba(30,98,212,0.7) 100%), url('https://homeessentials.in/cdn/shop/files/Frame_2.png?v=1759563043') center/cover;">
+                <div class="banner-card-content">
+                    <h3>Modular Kitchen Storage</h3>
+                    <p>Maximize space and bring order to cabinets with stackable glass jars and wall shelves.</p>
+                    <a href="?category=kitchen" class="btn btn-banner">Shop Kitchen <i class="fas fa-chevron-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Blog / Organisation Guides Section -->
+<section class="home-blog-sec">
+    <div class="container">
+        <h2 class="section-title text-center">Organisation Tips & Home Inspiration</h2>
+        <p class="section-subtitle text-center">Simple ideas to design an clutter-free and happy home</p>
+        
+        <div class="blog-cards-grid">
+            <div class="blog-card">
+                <div class="blog-img-wrapper" style="background: linear-gradient(135deg, rgba(30,98,212,0.1) 0%, rgba(15,43,92,0.2) 100%);">
+                    <i class="fas fa-kitchen-set"></i>
+                </div>
+                <div class="blog-info">
+                    <span class="blog-tag">Kitchen Essentials</span>
+                    <h4>5 Easy Steps to Organise Your Kitchen Cabinets</h4>
+                    <p>Learn how simple modifications and storage tools can turn any messy shelf into a modular display.</p>
+                    <a href="{% url 'about' %}" class="blog-read-link">Read Guide <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="blog-card">
+                <div class="blog-img-wrapper" style="background: linear-gradient(135deg, rgba(30,98,212,0.1) 0%, rgba(15,43,92,0.2) 100%);">
+                    <i class="fas fa-blender"></i>
+                </div>
+                <div class="blog-info">
+                    <span class="blog-tag">Healthy Living</span>
+                    <h4>Why Stainless Steel Lunch Boxes Rule School Lunches</h4>
+                    <p>Keep food warm, fresh, and free of toxic plastics with premium multi-compartment lunch systems.</p>
+                    <a href="{% url 'about' %}" class="blog-read-link">Read Guide <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="blog-card">
+                <div class="blog-img-wrapper" style="background: linear-gradient(135deg, rgba(30,98,212,0.1) 0%, rgba(15,43,92,0.2) 100%);">
+                    <i class="fas fa-glass-water"></i>
+                </div>
+                <div class="blog-info">
+                    <span class="blog-tag">Hydration Guide</span>
+                    <h4> motivational Water Bottles: Staying Hydrated Made Easy</h4>
+                    <p>Find out how time markers and leakproof carrying loops make hydration simpler in office and gym.</p>
+                    <a href="{% url 'about' %}" class="blog-read-link">Read Guide <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Client Side Category Filter JS Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterTabs = document.querySelectorAll('.filter-tab-btn');
+    const productCards = document.querySelectorAll('.shopify-product-card');
+    const productsGrid = document.getElementById('productsGrid');
+
+    filterTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Remove active class from all tabs
+            filterTabs.forEach(t => t.classList.remove('active'));
+            // Add active class to current tab
+            this.classList.add('active');
+
+            const targetCategory = this.getAttribute('data-category');
+            let visibleCount = 0;
+
+            productCards.forEach(card => {
+                const cardCategory = card.getAttribute('data-category');
+                if (targetCategory === 'all' || cardCategory === targetCategory) {
+                    card.style.display = 'flex';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Adjust grid layout dynamically if products are filtered
+            if (visibleCount === 0) {
+                // Should show message if grid is empty, but we already have data
+            }
+        });
+    });
+});
+</script>
 {% endblock %}

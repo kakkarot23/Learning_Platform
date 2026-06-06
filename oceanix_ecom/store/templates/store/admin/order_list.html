@@ -43,7 +43,10 @@
                 </td>
                 <td><span class="badge badge-{{ order.status }}">{{ order.get_status_display }}</span></td>
                 <td>{{ order.created_at|date:"M d, Y" }}</td>
-                <td><a href="{% url 'admin_order_detail' order.id %}" class="btn btn-small btn-secondary">View</a></td>
+                <td>
+                    <a href="{% url 'admin_order_detail' order.id %}" class="btn btn-small btn-secondary" style="border-radius: 4px;">View</a>
+                    <a href="{% url 'admin_order_bill' order.id %}" target="_blank" class="btn btn-small btn-primary" style="background-color: var(--primary-color); padding: 6px 10px; border-radius: 4px; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; border: none; color: #fff; text-decoration: none;"><i class="fas fa-print"></i> Print</a>
+                </td>
             </tr>
             {% empty %}
             <tr>

@@ -3,9 +3,12 @@
 {% block title %}Order {{ order.order_number }}{% endblock %}
 
 {% block content %}
-<div class="admin-header">
+<div class="admin-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
     <h1>Order {{ order.order_number }}</h1>
-    <a href="{% url 'admin_order_list' %}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+    <div style="display: flex; gap: 10px;">
+        <a href="{% url 'admin_order_bill' order.id %}" target="_blank" class="btn btn-primary" style="background-color: var(--primary-color); border-radius: 4px; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-print"></i> Print Invoice</a>
+        <a href="{% url 'admin_order_list' %}" class="btn btn-secondary" style="border-radius: 4px; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-arrow-left"></i> Back</a>
+    </div>
 </div>
 
 <div class="admin-grid-2">

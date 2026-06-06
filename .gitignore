@@ -22,3 +22,7 @@ Thumbs.db
 
 # Env
 .env
+
+# Recordings / scripts
+*.mp4
+push_to_github.bat
