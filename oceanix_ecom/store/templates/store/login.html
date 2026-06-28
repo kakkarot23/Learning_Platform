@@ -4,35 +4,168 @@
 {% block title %}Login - OCEANIX{% endblock %}
 
 {% block content %}
-<div class="auth-container">
-    <div class="auth-box">
-        <h1>Login to OCEANIX</h1>
+<div class="auth-container" style="padding: 50px 0; display: flex; justify-content: center; align-items: center; min-height: 80vh; background-color: var(--secondary-color); transition: background-color 0.3s;">
+    <div class="auth-box" style="background: #ffffff; border-radius: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); width: 100%; max-width: 440px; padding: 40px; border: 1px solid var(--border-color); text-align: left; transition: all 0.3s;">
+        <h1 style="font-size: 24px; font-weight: 700; color: var(--primary-dark); margin-bottom: 24px; text-align: center;">Login to OCEANIX</h1>
         
-        <form method="post" class="auth-form">
+        <!-- Auth Tabs -->
+        <div style="display: flex; border-bottom: 2px solid var(--border-color); margin-bottom: 24px; gap: 15px;">
+            <button onclick="switchTab('password')" id="tab-password" style="background: none; border: none; font-size: 14px; font-weight: 700; color: var(--primary-color); padding: 10px 0; border-bottom: 2px solid var(--primary-color); cursor: pointer; transition: all 0.2s;">Password</button>
+            <button onclick="switchTab('magic')" id="tab-magic" style="background: none; border: none; font-size: 14px; font-weight: 600; color: var(--text-light); padding: 10px 0; border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s;">Magic Link</button>
+            <button onclick="switchTab('otp')" id="tab-otp" style="background: none; border: none; font-size: 14px; font-weight: 600; color: var(--text-light); padding: 10px 0; border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s;">Phone OTP</button>
+        </div>
+
+        <!-- 1. Password Form -->
+        <form method="post" id="form-password" class="auth-form" style="display: block;">
             {% csrf_token %}
-            
-            <div class="form-group">
-                <label for="id_username">Username</label>
+            <div class="form-group" style="margin-bottom: 18px; display: flex; flex-direction: column; gap: 6px;">
+                <label for="id_username" style="font-size: 13px; font-weight: 600; color: #475569;">Username</label>
                 {{ form.username }}
                 {% if form.username.errors %}
-                    <span class="error">{{ form.username.errors }}</span>
+                    <span class="error" style="color: #ef4444; font-size: 12px;">{{ form.username.errors }}</span>
                 {% endif %}
             </div>
             
-            <div class="form-group">
-                <label for="id_password">Password</label>
+            <div class="form-group" style="margin-bottom: 20px; display: flex; flex-direction: column; gap: 6px;">
+                <label for="id_password" style="font-size: 13px; font-weight: 600; color: #475569;">Password</label>
                 {{ form.password }}
                 {% if form.password.errors %}
-                    <span class="error">{{ form.password.errors }}</span>
+                    <span class="error" style="color: #ef4444; font-size: 12px;">{{ form.password.errors }}</span>
                 {% endif %}
             </div>
             
-            <button type="submit" class="btn btn-primary btn-large">Login</button>
+            <button type="submit" class="btn btn-primary btn-large" style="width: 100%; padding: 12px; border-radius: 10px; background-color: var(--primary-color); border: none; color: white; font-weight: 700; cursor: pointer;">Login</button>
         </form>
+
+        <!-- 2. Magic Link Form -->
+        <div id="form-magic" style="display: none;">
+            <div class="form-group" style="margin-bottom: 18px; display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-size: 13px; font-weight: 600; color: #475569;">Email Address</label>
+                <input type="email" id="magic-email" class="form-control" placeholder="name@example.com" style="width:100%; border:1.5px solid var(--border-color); border-radius:10px; padding:11px 14px; outline:none; background:#f8fafc; font-size:14px; box-sizing:border-box;">
+            </div>
+            <button onclick="sendMagicLink()" class="btn btn-primary btn-large" style="width: 100%; padding: 12px; border-radius: 10px; background-color: var(--primary-color); border: none; color: white; font-weight: 700; cursor: pointer;">Send Magic Link</button>
+            <p id="magic-status" style="font-size: 12px; color: var(--success-color); font-weight: 600; margin-top: 10px; display: none; text-align: center;"><i class="fas fa-circle-check"></i> Magic Link sent! Check your inbox to login instantly.</p>
+        </div>
+
+        <!-- 3. Phone OTP Form -->
+        <div id="form-otp" style="display: none;">
+            <div id="otp-step-1">
+                <div class="form-group" style="margin-bottom: 18px; display: flex; flex-direction: column; gap: 6px;">
+                    <label style="font-size: 13px; font-weight: 600; color: #475569;">Mobile Phone Number</label>
+                    <div style="display: flex; gap: 8px;">
+                        <span style="border: 1.5px solid var(--border-color); border-radius: 10px; padding: 11px 12px; background: var(--secondary-color); font-size: 14px; font-weight: 600;">+91</span>
+                        <input type="tel" id="otp-phone" class="form-control" placeholder="98765 43210" style="flex:1; border:1.5px solid var(--border-color); border-radius:10px; padding:11px 14px; outline:none; background:#f8fafc; font-size:14px; box-sizing:border-box;">
+                    </div>
+                </div>
+                <button onclick="sendOTP()" class="btn btn-primary btn-large" style="width: 100%; padding: 12px; border-radius: 10px; background-color: var(--primary-color); border: none; color: white; font-weight: 700; cursor: pointer;">Send OTP</button>
+            </div>
+            <div id="otp-step-2" style="display: none;">
+                <div class="form-group" style="margin-bottom: 18px; display: flex; flex-direction: column; gap: 6px;">
+                    <label style="font-size: 13px; font-weight: 600; color: #475569;">Enter 6-Digit OTP</label>
+                    <input type="text" id="otp-code" class="form-control" placeholder="123456" maxlength="6" style="width:100%; border:1.5px solid var(--border-color); border-radius:10px; padding:11px 14px; outline:none; background:#f8fafc; font-size:14px; box-sizing:border-box; letter-spacing: 4px; text-align: center; font-weight: 700;">
+                </div>
+                <button onclick="verifyOTP()" class="btn btn-primary btn-large" style="width: 100%; padding: 12px; border-radius: 10px; background-color: var(--primary-color); border: none; color: white; font-weight: 700; cursor: pointer;">Verify &amp; Login</button>
+            </div>
+            <p id="otp-status" style="font-size: 12px; color: var(--success-color); font-weight: 600; margin-top: 10px; display: none; text-align: center;"></p>
+        </div>
+
+        <!-- Social login divider -->
+        <div style="margin: 24px 0; text-align: center; color: var(--text-light); font-size: 12px; position: relative;">
+            <span style="background: #ffffff; padding: 0 10px; position: relative; z-index: 1;">Or Sign In With</span>
+            <div style="position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: var(--border-color); z-index: 0;"></div>
+        </div>
+
+        <!-- Social buttons grid -->
+        <div style="display: flex; gap: 12px; justify-content: center; margin-bottom: 24px;">
+            <button onclick="socialLogin('Google')" style="flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px; border: 1.5px solid var(--border-color); border-radius: 10px; background: #ffffff; cursor: pointer; transition: all 0.2s;"><i class="fab fa-google" style="color:#ea4335; font-size:16px; margin-right:6px;"></i> Google</button>
+            <button onclick="socialLogin('Facebook')" style="flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px; border: 1.5px solid var(--border-color); border-radius: 10px; background: #ffffff; cursor: pointer; transition: all 0.2s;"><i class="fab fa-facebook-f" style="color:#1877f2; font-size:16px; margin-right:6px;"></i> Facebook</button>
+            <button onclick="socialLogin('Apple')" style="flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px; border: 1.5px solid var(--border-color); border-radius: 10px; background: #ffffff; cursor: pointer; transition: all 0.2s;"><i class="fab fa-apple" style="color:#000000; font-size:16px; margin-right:6px;"></i> Apple</button>
+        </div>
         
-        <div class="auth-footer">
-            <p>Don't have an account? <a href="{% url 'register' %}">Register here</a></p>
+        <div class="auth-footer" style="text-align: center; font-size: 13.5px; color: var(--text-light);">
+            <p style="margin: 0;">Don't have an account? <a href="{% url 'register' %}" style="color: var(--primary-color); font-weight: 600; text-decoration: none;">Register here</a></p>
         </div>
     </div>
 </div>
+
+<script>
+function switchTab(type) {
+    const tabs = ['password', 'magic', 'otp'];
+    tabs.forEach(t => {
+        const btn = document.getElementById('tab-' + t);
+        const form = document.getElementById('form-' + t);
+        if (t === type) {
+            btn.style.color = 'var(--primary-color)';
+            btn.style.borderBottom = '2px solid var(--primary-color)';
+            btn.style.fontWeight = '700';
+            form.style.display = 'block';
+        } else {
+            btn.style.color = 'var(--text-light)';
+            btn.style.borderBottom = '2px solid transparent';
+            btn.style.fontWeight = '600';
+            form.style.display = 'none';
+        }
+    });
+}
+
+function socialLogin(provider) {
+    alert("🤖 Simulated Social Login with " + provider + "! Signing in securely via Auth0 OAuth provider...");
+    window.location.href = '/';
+}
+
+function sendMagicLink() {
+    const email = document.getElementById('magic-email').value;
+    if (!email) {
+        alert('Please enter your email address!');
+        return;
+    }
+    document.getElementById('magic-status').style.display = 'block';
+    setTimeout(() => {
+        window.location.href = '/';
+    }, 2500);
+}
+
+function sendOTP() {
+    const phone = document.getElementById('otp-phone').value;
+    if (!phone) {
+        alert('Please enter your phone number!');
+        return;
+    }
+    document.getElementById('otp-step-1').style.display = 'none';
+    document.getElementById('otp-step-2').style.display = 'block';
+    const status = document.getElementById('otp-status');
+    status.style.display = 'block';
+    status.innerHTML = '<i class="fas fa-paper-plane"></i> OTP sent to ' + phone + '! Use code <strong>123456</strong> to verify.';
+}
+
+function verifyOTP() {
+    const code = document.getElementById('otp-code').value;
+    if (code !== '123456') {
+        alert('Invalid verification code! Try 123456');
+        return;
+    }
+    window.location.href = '/';
+}
+</script>
+
+<style>
+/* Styling adjustments for form-control inside auth-container */
+.auth-box input[type="text"], .auth-box input[type="password"] {
+    width: 100%;
+    border: 1.5px solid var(--border-color);
+    border-radius: 10px;
+    padding: 11px 14px;
+    outline: none;
+    background: #f8fafc;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: all 0.2s;
+}
+.auth-box input:focus {
+    border-color: var(--primary-color);
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+</style>
 {% endblock %}
+

@@ -9,11 +9,134 @@
     <a href="{% url 'add_product' %}" class="btn btn-primary" style="background-color: var(--primary-color); border-radius: 50px; padding: 10px 24px;"><i class="fas fa-plus"></i> Add New Product</a>
 </div>
 
+<!-- Low Stock Alerts / Stats Grid -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px;">
+    <div class="admin-card" style="padding: 20px; display: flex; align-items: center; gap: 16px; margin-bottom: 0;">
+        <div style="background-color: #eff6ff; color: #2563eb; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">
+            <i class="fas fa-boxes-stacked"></i>
+        </div>
+        <div>
+            <span style="font-size: 13px; color: var(--text-light); display: block;">Total Products</span>
+            <strong style="font-size: 20px; color: var(--text-dark);">{{ total_count }}</strong>
+        </div>
+    </div>
+    <div class="admin-card" style="padding: 20px; display: flex; align-items: center; gap: 16px; margin-bottom: 0; {% if low_stock_count > 0 %}border-left: 4px solid var(--accent-orange);{% endif %}">
+        <div style="background-color: #fffbeb; color: var(--accent-orange); width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">
+            <i class="fas fa-triangle-exclamation"></i>
+        </div>
+        <div>
+            <span style="font-size: 13px; color: var(--text-light); display: block;">Low Stock Alerts</span>
+            <strong style="font-size: 20px; color: var(--accent-orange);">{{ low_stock_count }}</strong>
+        </div>
+    </div>
+    <div class="admin-card" style="padding: 20px; display: flex; align-items: center; gap: 16px; margin-bottom: 0; {% if out_of_stock_count > 0 %}border-left: 4px solid var(--danger-color);{% endif %}">
+        <div style="background-color: #fef2f2; color: var(--danger-color); width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">
+            <i class="fas fa-circle-xmark"></i>
+        </div>
+        <div>
+            <span style="font-size: 13px; color: var(--text-light); display: block;">Out of Stock</span>
+            <strong style="font-size: 20px; color: var(--danger-color);">{{ out_of_stock_count }}</strong>
+        </div>
+    </div>
+</div>
+
+<!-- AI Demand Forecasting & Smart Reorder Center -->
+<div class="admin-card" style="margin-bottom: 24px; padding: 20px; border-left: 4px solid #2563eb; background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); position: relative; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);">
+    <div style="position: absolute; top: -10px; right: -10px; font-size: 80px; color: rgba(37, 99, 235, 0.03); pointer-events: none;">
+        <i class="fas fa-brain"></i>
+    </div>
+    
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; margin-bottom: 16px; position: relative; z-index: 2;">
+        <div>
+            <h3 style="margin: 0 0 6px 0; color: #1e3a8a; display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 700;">
+                <i class="fas fa-brain" style="color: #2563eb; animation: pulse 2s infinite;"></i> AI Inventory Demand Forecasting
+            </h3>
+            <p style="margin: 0; font-size: 13px; color: var(--text-light);">
+                Predictive analysis models sales velocity, seasonal trends, and current stockout velocities to auto-reorder before depletion.
+            </p>
+        </div>
+        <div style="background-color: #eff6ff; color: #2563eb; padding: 8px 16px; border-radius: 50px; font-size: 12px; font-weight: 700; border: 1px solid #dbeafe; display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fas fa-chart-line"></i> Total Next-Month Forecasted Velocity: <strong>{{ total_predicted_demand }} units</strong>
+        </div>
+    </div>
+
+    <div style="position: relative; z-index: 2;">
+        {% if forecast_reorders %}
+        <div style="background: white; border: 1px solid #edf2f7; border-radius: 12px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 12px;">
+                <span style="font-weight: 700; font-size: 14px; color: #1e3a8a; display: flex; align-items: center; gap: 6px;">
+                    <i class="fas fa-triangle-exclamation" style="color: #eab308;"></i> Critical Stockout Risk Auto-Reorder Checklist
+                </span>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <button type="button" id="select-all-reorders" style="background: none; border: none; color: #2563eb; font-size: 12px; cursor: pointer; font-weight: 600; padding: 0;">Select All</button>
+                    <span style="color: #cbd5e1; font-size: 12px;">|</span>
+                    <button type="button" id="deselect-all-reorders" style="background: none; border: none; color: #64748b; font-size: 12px; cursor: pointer; font-weight: 600; padding: 0;">Deselect All</button>
+                </div>
+            </div>
+
+            <!-- Checklist Table -->
+            <div style="max-height: 200px; overflow-y: auto; margin-bottom: 16px; border: 1px solid #edf2f7; border-radius: 8px;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+                    <thead>
+                        <tr style="background: #f8fafc; border-bottom: 1px solid #edf2f7; position: sticky; top: 0; z-index: 1;">
+                            <th style="padding: 10px 12px; width: 40px; text-align: center;">Select</th>
+                            <th style="padding: 10px 12px;">Product</th>
+                            <th style="padding: 10px 12px; text-align: center; width: 110px;">Current Stock</th>
+                            <th style="padding: 10px 12px; text-align: center; width: 140px;">Stockout Risk</th>
+                            <th style="padding: 10px 12px; text-align: center; width: 160px;">Recommended Order</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in forecast_reorders %}
+                        <tr style="border-bottom: 1px solid #edf2f7;" class="reorder-row">
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <input type="checkbox" class="reorder-checkbox" data-id="{{ item.id }}" data-qty="{{ item.recommended_qty }}" checked style="width: 16px; height: 16px; accent-color: #2563eb; cursor: pointer;">
+                            </td>
+                            <td style="padding: 10px 12px; font-weight: 600; color: var(--text-dark);">
+                                {{ item.name }}
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center; font-weight: 700; color: {% if item.stock == 0 %}#ef4444{% else %}#f59e0b{% endif %};">
+                                {{ item.stock }} units
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <span style="background-color: {% if item.risk >= 90 %}#fef2f2; color: #ef4444;{% else %}#fffbeb; color: #d97706;{% endif %} padding: 2px 8px; border-radius: 50px; font-size: 11px; font-weight: 700; display: inline-block;">
+                                    {{ item.risk }}% ({{ item.days }}d left)
+                                </span>
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center; font-weight: 700; color: #10b981;">
+                                +{{ item.recommended_qty }} units
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Reorder Action Bar -->
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                <span style="font-size: 13px; color: var(--text-light);">
+                    Selected: <strong id="reorder-count" style="color: #2563eb;">{{ forecast_reorders|length }}</strong> products | Total Replenishment: <strong id="reorder-qty-total" style="color: #10b981;">0</strong> units
+                </span>
+                <button type="button" id="trigger-bulk-reorder" class="btn" style="background-color: #10b981; color: white; font-weight: 700; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2); transition: all 0.2s;">
+                    <i class="fas fa-truck-loading"></i> Execute AI Auto-Reorder
+                </button>
+            </div>
+        </div>
+        {% else %}
+        <div style="background: white; border: 1px solid #edf2f7; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <i class="fas fa-circle-check" style="font-size: 28px; color: #10b981; margin-bottom: 8px; display: inline-block; vertical-align: middle;"></i>
+            <strong style="color: var(--text-dark); margin-left: 8px; font-size: 14px;">All Stock Levels Optimal</strong>
+            <p style="font-size: 12px; color: var(--text-light); margin: 4px 0 0 0;">No immediate stockout risks detected. Inventory levels match current demand forecasts.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
 <!-- Search & Filtering Bar -->
 <div class="admin-card" style="margin-bottom: 24px; padding: 20px;">
-    <form method="get" style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+    <form method="get" style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap; width: 100%;">
         <div style="flex: 1; min-width: 250px; position: relative;">
-            <input type="text" name="q" value="{{ query }}" placeholder="Search products by name..." style="width: 100%; padding: 10px 16px; border: 1.5px solid var(--border-color); border-radius: 8px; font-family: var(--font-family); font-size: 14px; outline: none;">
+            <input type="text" name="q" value="{{ query }}" placeholder="Search by name, SKU, or barcode..." style="width: 100%; padding: 10px 16px; border: 1.5px solid var(--border-color); border-radius: 8px; font-family: var(--font-family); font-size: 14px; outline: none;">
         </div>
         <div style="width: 200px;">
             <select name="category" style="width: 100%; padding: 10px 16px; border: 1.5px solid var(--border-color); border-radius: 8px; font-family: var(--font-family); font-size: 14px; outline: none;">
@@ -26,6 +149,9 @@
         <button type="submit" class="btn btn-primary" style="background-color: var(--primary-color); border-radius: 8px; padding: 10px 20px;">
             <i class="fas fa-filter"></i> Filter
         </button>
+        <a href="{% url 'admin_inventory_export' %}" class="btn" style="background-color: #22c55e; color: white; border-radius: 8px; padding: 10px 20px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-weight: 600;">
+            <i class="fas fa-file-csv"></i> Export CSV
+        </a>
         {% if query or selected_category %}
         <a href="{% url 'admin_inventory' %}" style="font-size: 14px; color: var(--text-light); text-decoration: none; margin-left: 8px;">Clear Filters</a>
         {% endif %}
@@ -41,6 +167,7 @@
                 <tr style="background-color: #f8fafc; border-bottom: 2px solid var(--border-color);">
                     <th style="padding: 16px 20px; font-weight: 600; font-size: 13px; color: var(--text-dark); width: 80px;">Image</th>
                     <th style="padding: 16px 20px; font-weight: 600; font-size: 13px; color: var(--text-dark);">Product Details</th>
+                    <th style="padding: 16px 20px; font-weight: 600; font-size: 13px; color: var(--text-dark); width: 180px;">SKU & Barcode</th>
                     <th style="padding: 16px 20px; font-weight: 600; font-size: 13px; color: var(--text-dark); width: 150px;">Price & MRP (₹)</th>
                     <th style="padding: 16px 20px; font-weight: 600; font-size: 13px; color: var(--text-dark); width: 130px;">Stock Status</th>
                     <th style="padding: 16px 20px; font-weight: 600; font-size: 13px; color: var(--text-dark); width: 340px;">Quick Adjust Stock</th>
@@ -49,7 +176,7 @@
             </thead>
             <tbody>
                 {% for product in products %}
-                <tr style="border-bottom: 1px solid #edf2f7; vertical-align: middle;">
+                <tr style="border-bottom: 1px solid #edf2f7; vertical-align: middle; {% if product.stock <= 5 %}background-color: #fffbeb;{% endif %}">
                     <!-- Image -->
                     <td style="padding: 16px 20px;">
                         {% if product.image %}
@@ -64,15 +191,51 @@
                     <!-- Product Details -->
                     <td style="padding: 16px 20px;">
                         <span style="font-weight: 700; font-size: 15px; color: var(--text-dark); display: block; margin-bottom: 2px;">{{ product.name }}</span>
-                        <span style="font-size: 12px; color: var(--primary-color); font-weight: 600; background-color: var(--secondary-color); padding: 2px 8px; border-radius: 50px; text-transform: uppercase;">{{ product.category.name }}</span>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <span style="font-size: 12px; color: var(--primary-color); font-weight: 600; background-color: var(--secondary-color); padding: 2px 8px; border-radius: 50px; text-transform: uppercase;">{{ product.category.name }}</span>
+                            {% if product.sku %}
+                            <span style="font-size: 11px; color: var(--text-light); font-family: monospace;">SKU: {{ product.sku }}</span>
+                            {% endif %}
+                        </div>
                         {% if product.short_description %}
                         <small style="color: var(--text-light); display: block; margin-top: 4px;">{{ product.short_description|truncatechars:60 }}</small>
                         {% endif %}
+                        
+                        <!-- AI Auto-Tagging Section -->
+                        <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 6px; border-top: 1px dashed #edf2f7; padding-top: 8px;">
+                            <div id="ai-tags-wrapper-{{ product.id }}" class="ai-tags-wrapper" data-tags="{{ product.ai_tags }}" style="display: flex; flex-wrap: wrap; gap: 4px; min-height: 18px; align-items: center;">
+                                <!-- AI tag pills rendered dynamically by JS -->
+                            </div>
+                            <div>
+                                <button type="button" class="ai-autotag-btn btn" data-product-id="{{ product.id }}" style="background-color: #eff6ff; color: #2563eb; border: 1.5px solid #dbeafe; font-size: 10px; padding: 3px 8px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; font-weight: 700; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
+                                    <i class="fas fa-robot"></i> AI Auto-Tag
+                                </button>
+                            </div>
+                        </div>
                     </td>
                     
-                    <!-- Inline Form for stock/price editing -->
+                    <!-- Inline Form for stock/price/SKU/barcode editing -->
                     <form method="post" action="{% url 'admin_inventory_update' product.id %}">
                         {% csrf_token %}
+                        <!-- SKU & Barcode Inputs -->
+                        <td style="padding: 16px 20px;">
+                            <div style="display: flex; flex-direction: column; gap: 6px;">
+                                <div style="display: flex; align-items: center; gap: 4px;">
+                                    <span style="font-size: 11px; color: var(--text-light); width: 30px;">SKU:</span>
+                                    <input type="text" name="sku" value="{{ product.sku|default:'' }}" placeholder="SKU-XXXX" style="width: 100px; padding: 4px 8px; border: 1px solid var(--border-color); border-radius: 4px; font-family: var(--font-family); font-size: 12px; outline: none;">
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 4px;">
+                                    <span style="font-size: 11px; color: var(--text-light); width: 30px;">BC:</span>
+                                    <input type="text" name="barcode" value="{{ product.barcode|default:'' }}" placeholder="Barcode" style="width: 100px; padding: 4px 8px; border: 1px solid var(--border-color); border-radius: 4px; font-family: var(--font-family); font-size: 12px; outline: none;">
+                                </div>
+                                {% if product.barcode %}
+                                <div style="font-family: 'Courier New', Courier, monospace; letter-spacing: 2px; font-size: 10px; color: #475569; background: #e2e8f0; padding: 2px 6px; border-radius: 3px; display: inline-block; width: max-content; margin-top: 2px;" title="Barcode representation">
+                                    ||||| | ||| {{ product.id }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </td>
+
                         <!-- Price & MRP -->
                         <td style="padding: 16px 20px;">
                             <div style="display: flex; flex-direction: column; gap: 6px;">
@@ -91,10 +254,28 @@
                         <td style="padding: 16px 20px;">
                             <div style="display: flex; flex-direction: column; gap: 4px;">
                                 <input type="number" name="stock" value="{{ product.stock }}" min="0" required style="width: 70px; padding: 6px 10px; border: 1px solid var(--border-color); border-radius: 6px; font-family: var(--font-family); font-size: 14px; font-weight: 600; text-align: center; outline: none;">
-                                {% if product.stock > 0 %}
+                                {% if product.stock > 5 %}
                                 <span style="font-size: 11px; font-weight: 700; color: var(--success-color); text-align: center;"><i class="fas fa-check-circle"></i> In Stock</span>
+                                {% elif product.stock > 0 %}
+                                <span style="font-size: 11px; font-weight: 700; color: var(--accent-orange); text-align: center;"><i class="fas fa-exclamation-circle"></i> Low Stock</span>
                                 {% else %}
                                 <span style="font-size: 11px; font-weight: 700; color: var(--danger-color); text-align: center;"><i class="fas fa-times-circle"></i> Out of Stock</span>
+                                {% endif %}
+                                
+                                <!-- AI Forecasting Indicators -->
+                                {% if product.stock > 0 %}
+                                <div style="margin-top: 6px; text-align: center; font-size: 10px; border-top: 1px dashed #e2e8f0; padding-top: 6px; display: flex; flex-direction: column; gap: 2px;">
+                                    <span style="color: var(--text-light);">Velocity: <strong style="color: var(--text-dark);">{{ product.demand_velocity }} units/mo</strong></span>
+                                    <span style="background-color: {% if product.stockout_risk >= 80 %}#fef2f2; color: #ef4444;{% elif product.stockout_risk >= 50 %}#fffbeb; color: #d97706;{% else %}#f0fdf4; color: #16a34a;{% endif %} padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700; display: inline-block;">
+                                        Stockout Risk: {{ product.stockout_risk }}% ({% if product.stockout_days == 0 %}Urgent{% else %}{{ product.stockout_days }}d{% endif %})
+                                    </span>
+                                </div>
+                                {% else %}
+                                <div style="margin-top: 6px; text-align: center; font-size: 10px; border-top: 1px dashed #e2e8f0; padding-top: 6px;">
+                                    <span style="background-color: #fef2f2; color: #ef4444; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700; display: inline-block;">
+                                        Stockout Risk: 100%
+                                    </span>
+                                </div>
                                 {% endif %}
                             </div>
                         </td>
@@ -130,4 +311,299 @@
     </div>
     {% endif %}
 </div>
+
+<!-- AI Reorder Simulation Overlay -->
+<div id="reorder-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); z-index: 9999; align-items: center; justify-content: center; color: white; font-family: var(--font-family);">
+    <div style="background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 32px; width: 90%; max-width: 480px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
+        <!-- Step 1: Purchasing -->
+        <div id="reorder-step-1">
+            <i class="fas fa-robot fa-spin" style="font-size: 48px; color: #38bdf8; margin-bottom: 20px; display: inline-block;"></i>
+            <h3 style="font-size: 20px; font-weight: 700; margin: 0 0 10px 0; color: #f8fafc;">AI Auto-Reorder Processing</h3>
+            <p style="color: #94a3b8; font-size: 14px; margin-bottom: 24px;">Generating purchase orders and sending electronic dispatch requests to suppliers...</p>
+            <div style="background: #0f172a; height: 6px; border-radius: 3px; overflow: hidden; margin-bottom: 12px;">
+                <div id="reorder-progress" style="background: linear-gradient(90deg, #3b82f6 0%, #10b981 100%); width: 0%; height: 100%; transition: width 0.4s ease;"></div>
+            </div>
+            <div style="font-size: 12px; color: #64748b;" id="reorder-status-text">Connecting to supplier API...</div>
+        </div>
+        <!-- Step 2: Completed -->
+        <div id="reorder-step-2" style="display: none;">
+            <i class="fas fa-circle-check" style="font-size: 54px; color: #10b981; margin-bottom: 20px; display: inline-block;"></i>
+            <h3 style="font-size: 20px; font-weight: 700; margin: 0 0 10px 0; color: #f8fafc;">Replenishment Successful</h3>
+            <p style="color: #94a3b8; font-size: 14px; margin-bottom: 24px;" id="reorder-result-text">Stock updated successfully across selected items.</p>
+            <button type="button" id="reorder-close" class="btn" style="background-color: #2563eb; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%;">Return to Inventory</button>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(0.96); }
+}
+.ai-tag-pill:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(37,99,235,0.1);
+}
+.ai-autotag-btn:hover {
+    background-color: #dbeafe !important;
+    transform: translateY(-1px);
+}
+.ai-autotag-btn:active {
+    transform: translateY(0);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // ---- AI Auto-Tagging Implementation ----
+    const tagWrappers = document.querySelectorAll('.ai-tags-wrapper');
+    tagWrappers.forEach(wrapper => {
+        const tagsStr = wrapper.dataset.tags || '';
+        renderTagPills(wrapper, tagsStr);
+    });
+    
+    function renderTagPills(container, tagsStr) {
+        container.innerHTML = '';
+        if (!tagsStr.trim()) {
+            container.innerHTML = '<span style="font-size: 11px; color: var(--text-light); font-style: italic;">No AI tags detected</span>';
+            return;
+        }
+        
+        const tags = tagsStr.split(',').map(t => t.trim()).filter(t => t.length > 0);
+        tags.forEach(tag => {
+            const pill = document.createElement('span');
+            pill.className = 'ai-tag-pill';
+            pill.style.cssText = `
+                font-size: 10px;
+                background-color: #eff6ff;
+                color: #2563eb;
+                padding: 2px 6px;
+                border-radius: 4px;
+                border: 1px solid #dbeafe;
+                font-weight: 500;
+                margin-right: 4px;
+                margin-bottom: 4px;
+                display: inline-block;
+                transition: all 0.2s;
+                cursor: default;
+            `;
+            pill.textContent = tag;
+            container.appendChild(pill);
+        });
+    }
+
+    const autotagBtns = document.querySelectorAll('.ai-autotag-btn');
+    autotagBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const prodId = btn.dataset.productId;
+            const wrapper = document.getElementById(`ai-tags-wrapper-${prodId}`);
+            
+            // Disable button
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Tagging...';
+            btn.style.backgroundColor = '#f1f5f9';
+            btn.style.borderColor = '#cbd5e1';
+            btn.style.color = '#94a3b8';
+            btn.style.cursor = 'not-allowed';
+            
+            // Show progress steps in container
+            const steps = [
+                'Scanning visual characteristics...',
+                'Matching taxonomy vectors...',
+                'Updating database registers...'
+            ];
+            
+            let stepIndex = 0;
+            wrapper.innerHTML = `<span style="font-size: 10px; color: #2563eb; font-weight: 600; display: flex; align-items: center; gap: 6px;"><i class="fas fa-circle-notch fa-spin"></i> ${steps[0]}</span>`;
+            
+            const stepTimer = setInterval(() => {
+                stepIndex++;
+                if (stepIndex < steps.length) {
+                    wrapper.innerHTML = `<span style="font-size: 10px; color: #2563eb; font-weight: 600; display: flex; align-items: center; gap: 6px;"><i class="fas fa-circle-notch fa-spin"></i> ${steps[stepIndex]}</span>`;
+                } else {
+                    clearInterval(stepTimer);
+                }
+            }, 600);
+            
+            // Send request
+            fetch(`/panel/inventory/auto-tag/${prodId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                setTimeout(() => { // Ensure step animation shows for at least 1.8s
+                    clearInterval(stepTimer);
+                    if (data.status === 'success') {
+                        renderTagPills(wrapper, data.tags);
+                        
+                        // Update button state to Completed
+                        btn.innerHTML = '<i class="fas fa-check-circle" style="color: #10b981;"></i> Auto-Tagged';
+                        btn.style.backgroundColor = '#f0fdf4';
+                        btn.style.borderColor = '#bbf7d0';
+                        btn.style.color = '#16a34a';
+                        
+                        // Highlight tags briefly
+                        const pills = wrapper.querySelectorAll('.ai-tag-pill');
+                        pills.forEach(p => {
+                            p.style.boxShadow = '0 0 8px rgba(37, 99, 235, 0.4)';
+                            p.style.transform = 'scale(1.05)';
+                            setTimeout(() => {
+                                p.style.boxShadow = 'none';
+                                p.style.transform = 'none';
+                            }, 1000);
+                        });
+                    } else {
+                        alert('Auto-tag failed: ' + data.message);
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-robot"></i> AI Auto-Tag';
+                        btn.style.backgroundColor = '';
+                        btn.style.borderColor = '';
+                        btn.style.color = '';
+                        renderTagPills(wrapper, wrapper.dataset.tags || '');
+                    }
+                }, 1800);
+            })
+            .catch(err => {
+                clearInterval(stepTimer);
+                console.error(err);
+                alert('An error occurred during auto-tagging.');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-robot"></i> AI Auto-Tag';
+                btn.style.backgroundColor = '';
+                btn.style.borderColor = '';
+                btn.style.color = '';
+                renderTagPills(wrapper, wrapper.dataset.tags || '');
+            });
+        });
+    });
+
+    // ---- AI Reorder Checklist Implementation ----
+    const checkboxes = document.querySelectorAll('.reorder-checkbox');
+    const countSpan = document.getElementById('reorder-count');
+    const totalQtySpan = document.getElementById('reorder-qty-total');
+    
+    function updateReorderSummary() {
+        let count = 0;
+        let totalQty = 0;
+        checkboxes.forEach(cb => {
+            if (cb.checked) {
+                count++;
+                totalQty += parseInt(cb.dataset.qty || 0);
+            }
+        });
+        if (countSpan) countSpan.textContent = count;
+        if (totalQtySpan) totalQtySpan.textContent = totalQty.toLocaleString();
+    }
+    
+    checkboxes.forEach(cb => cb.addEventListener('change', updateReorderSummary));
+    
+    const selectAll = document.getElementById('select-all-reorders');
+    const deselectAll = document.getElementById('deselect-all-reorders');
+    
+    if (selectAll) {
+        selectAll.addEventListener('click', () => {
+            checkboxes.forEach(cb => cb.checked = true);
+            updateReorderSummary();
+        });
+    }
+    
+    if (deselectAll) {
+        deselectAll.addEventListener('click', () => {
+            checkboxes.forEach(cb => cb.checked = false);
+            updateReorderSummary();
+        });
+    }
+    
+    // Initial calculation
+    updateReorderSummary();
+    
+    const triggerBtn = document.getElementById('trigger-bulk-reorder');
+    const overlay = document.getElementById('reorder-overlay');
+    const progress = document.getElementById('reorder-progress');
+    const statusText = document.getElementById('reorder-status-text');
+    const step1 = document.getElementById('reorder-step-1');
+    const step2 = document.getElementById('reorder-step-2');
+    const resultText = document.getElementById('reorder-result-text');
+    const closeBtn = document.getElementById('reorder-close');
+    
+    if (triggerBtn) {
+        triggerBtn.addEventListener('click', () => {
+            const itemsToReorder = [];
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    itemsToReorder.push({
+                        id: cb.dataset.id,
+                        qty: cb.dataset.qty
+                    });
+                }
+            });
+            
+            if (itemsToReorder.length === 0) {
+                alert('Please select at least one product to auto-reorder.');
+                return;
+            }
+            
+            // Show overlay
+            overlay.style.display = 'flex';
+            step1.style.display = 'block';
+            step2.style.display = 'none';
+            progress.style.width = '0%';
+            statusText.textContent = 'Connecting to supplier API...';
+            
+            // Send request
+            fetch('{% url "admin_bulk_reorder_api" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ items: itemsToReorder })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Simulate progress bar animation
+                    let pct = 0;
+                    const interval = setInterval(() => {
+                        pct += 25;
+                        progress.style.width = pct + '%';
+                        if (pct === 25) {
+                            statusText.textContent = 'Transmitting Purchase Orders to supplier portal...';
+                        } else if (pct === 50) {
+                            statusText.textContent = 'Authorizing supplier wholesale invoice payment...';
+                        } else if (pct === 75) {
+                            statusText.textContent = 'Awaiting vendor dispatch code...';
+                        } else if (pct === 100) {
+                            clearInterval(interval);
+                            setTimeout(() => {
+                                step1.style.display = 'none';
+                                step2.style.display = 'block';
+                                resultText.innerHTML = `Successfully processed auto-reorders for <strong>${itemsToReorder.length} products</strong>!<br>Replenishment complete and supplier invoice generated.<br><br>Local database updated and shipment tracking link issued!`;
+                            }, 500);
+                        }
+                    }, 400);
+                } else {
+                    alert('Reorder failed: ' + data.message);
+                    overlay.style.display = 'none';
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('An error occurred during reordering.');
+                overlay.style.display = 'none';
+            });
+        });
+    }
+    
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            overlay.style.display = 'none';
+            window.location.reload(); // Reload to show updated stock
+        });
+    }
+});
+</script>
 {% endblock %}

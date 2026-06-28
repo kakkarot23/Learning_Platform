@@ -1,0 +1,21 @@
+PRODUCT ID: 12
+NAME: Leakproof Water Bottle with Silicone Sleeve & Handle
+CATEGORY: Drinkware
+PRICE: INR 599.99
+MRP: INR 899.99
+DISCOUNT PERCENT: 33%
+RATING: 4.6 / 5.0
+REVIEWS COUNT: 289
+STOCK: 1
+SHORT DESCRIPTION: Glass bottle with protective sleeve in 3 colors
+ACTIVE STATUS: Active
+IMAGE FILE: WhatsApp Image 2026-06-05 at 16.02.41.jpeg
+
+=== HIGHLIGHTS ===
+BPA-free glass inner body
+Protective silicone sleeve
+Leakproof flip-lock lid
+Built-in carry handle
+
+=== FULL DESCRIPTION ===
+Premium leakproof water bottle with clear glass body and colorful protective silicone sleeve. Features a secure flip-lock lid and ergonomic carry handle. Available in Blue, White, and Pink.

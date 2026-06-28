@@ -26,3 +26,7 @@ Thumbs.db
 # Recordings / scripts
 *.mp4
 push_to_github.bat
+
+# Backups and duplicates
+oceanix_ecom copy/
+*.sqlite3.bak

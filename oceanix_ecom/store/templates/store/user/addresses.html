@@ -1,0 +1,156 @@
+{% extends 'store/base.html' %}
+
+{% block title %}My Addresses | OCEANIX{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="transition: all 0.3s;">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="list-group" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border-color);">
+                <a href="{% url 'user_dashboard' %}" class="list-group-item list-group-item-action d-flex align-items-center gap-2"><i class="fas fa-gauge-high"></i> Dashboard</a>
+                <a href="{% url 'user_profile' %}" class="list-group-item list-group-item-action d-flex align-items-center gap-2"><i class="fas fa-user-gear"></i> Profile Settings</a>
+                <a href="{% url 'user_addresses' %}" class="list-group-item list-group-item-action active d-flex align-items-center gap-2"><i class="fas fa-address-book"></i> Addresses</a>
+                <a href="{% url 'order_history' %}" class="list-group-item list-group-item-action d-flex align-items-center gap-2"><i class="fas fa-receipt"></i> Order History</a>
+                <a href="{% url 'user_wishlist' %}" class="list-group-item list-group-item-action d-flex align-items-center gap-2"><i class="fas fa-heart"></i> Wishlist</a>
+                <a href="{% url 'logout' %}" class="list-group-item list-group-item-action text-danger d-flex align-items-center gap-2"><i class="fas fa-right-from-bracket"></i> Logout</a>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="col-md-9" style="text-align: left;">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                <div>
+                    <h2 class="fw-bold" style="color: var(--primary-dark); margin:0;">📍 Shipping Addresses</h2>
+                    <p class="text-muted mb-0" style="font-size: 13px;">Manage and configure your default delivery preferences</p>
+                </div>
+                <button type="button" class="btn btn-primary d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#addAddressModal" style="border-radius: 20px; font-weight:600; padding:8px 20px; background-color: var(--primary-color); border:none;">
+                    <i class="fas fa-plus"></i> Add New Address
+                </button>
+            </div>
+            
+            <div class="row">
+                {% for address in addresses %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100" style="border: 1px solid {% if address.is_default %}var(--primary-color){% else %}var(--border-color){% endif %}; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: all 0.2s;">
+                        <div class="card-body d-flex flex-column justify-content-between" style="padding: 20px;">
+                            <div>
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <h5 class="fw-bold" style="color: var(--primary-dark); margin:0; font-size:15.5px;">{{ address.full_name }}</h5>
+                                    <span class="badge" style="font-size:11px; padding:5px 10px; border-radius:20px; font-weight:600; background: {% if address.address_type == 'Home' %}#eff6ff; color:#1d4ed8;{% elif address.address_type == 'Work' %}#f0fdf4; color:#166534;{% else %}#faf5ff; color:#6b21a8;{% endif %}">
+                                        {% if address.address_type == 'Home' %}<i class="fas fa-house"></i>{% elif address.address_type == 'Work' %}<i class="fas fa-briefcase"></i>{% else %}<i class="fas fa-map-pin"></i>{% endif %} {{ address.address_type }}
+                                    </span>
+                                </div>
+                                <p class="mb-1" style="font-size: 13.5px; color: var(--text-dark);">{{ address.address_line_1 }}</p>
+                                {% if address.address_line_2 %}
+                                    <p class="mb-1" style="font-size: 13.5px; color: var(--text-dark);">{{ address.address_line_2 }}</p>
+                                {% endif %}
+                                <p class="mb-1" style="font-size: 13.5px; color: var(--text-dark);">{{ address.city }}, {{ address.state }} - {{ address.postal_code }}</p>
+                                <p class="mb-3" style="font-size: 13.5px; color: var(--text-dark);">{{ address.country }}</p>
+                                <p class="mb-4" style="font-size: 13px; color: var(--text-light);"><i class="fas fa-phone text-muted" style="margin-right:6px;"></i><strong>Phone:</strong> {{ address.phone_number }}</p>
+                            </div>
+                            
+                            <div class="d-flex gap-2 align-items-center pt-2" style="border-top:1px solid var(--border-color);">
+                                {% if not address.is_default %}
+                                <form method="POST" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="set_default">
+                                    <input type="hidden" name="address_id" value="{{ address.id }}">
+                                    <button type="submit" class="btn btn-sm btn-outline-primary" style="border-radius:20px; font-weight:600; font-size:11.5px; padding: 4px 14px;">Set Default</button>
+                                </form>
+                                {% else %}
+                                <span class="badge bg-success" style="font-size:11px; padding:6px 12px; border-radius:20px; font-weight:600;"><i class="fas fa-circle-check"></i> Default Address</span>
+                                {% endif %}
+                                <form method="POST" class="d-inline ms-auto">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="delete">
+                                    <input type="hidden" name="address_id" value="{{ address.id }}">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this address?')" style="border-radius:20px; font-weight:600; font-size:11.5px; padding: 4px 14px;"><i class="fas fa-trash-can"></i> Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="card text-center p-5" style="border: 1px solid var(--border-color); border-radius: 12px;">
+                        <i class="fas fa-map-location-dot text-muted mb-3" style="font-size: 48px;"></i>
+                        <h5 class="text-muted">You haven't saved any addresses yet.</h5>
+                        <p style="font-size:13px; color:var(--text-light); max-width:400px; margin:0 auto 15px;">Add addresses now to checkout quickly during your purchase.</p>
+                        <button type="button" class="btn btn-primary d-flex align-items-center gap-2 mx-auto" data-bs-toggle="modal" data-bs-target="#addAddressModal" style="border-radius: 20px; font-weight:600;">
+                            <i class="fas fa-plus"></i> Add Address
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Address Modal -->
+<div class="modal fade" id="addAddressModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius: 16px; border:none; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15); overflow:hidden;">
+            <div class="modal-header" style="background:#f8fafc; border-bottom:1px solid var(--border-color); padding: 20px;">
+                <h5 class="modal-title fw-bold" style="color:var(--primary-dark);"><i class="fas fa-map-location-dot"></i> Add New Address</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="add">
+                <div class="modal-body" style="padding: 24px; text-align: left;">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold" style="font-size:12.5px; color:#475569;">Full Name</label>
+                        <input type="text" name="full_name" class="form-control" placeholder="John Doe" required style="border-radius:8px; padding:10px;">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold" style="font-size:12.5px; color:#475569;">Phone Number</label>
+                        <input type="text" name="phone_number" class="form-control" placeholder="9876543210" required style="border-radius:8px; padding:10px;">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold" style="font-size:12.5px; color:#475569;">Address Line 1</label>
+                        <input type="text" name="address_line_1" class="form-control" placeholder="Flat, House no., Apartment" required style="border-radius:8px; padding:10px;">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold" style="font-size:12.5px; color:#475569;">Address Line 2 (Optional)</label>
+                        <input type="text" name="address_line_2" class="form-control" placeholder="Area, Colony, Road, Landmark" style="border-radius:8px; padding:10px;">
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label class="form-label fw-bold" style="font-size:12.5px; color:#475569;">City</label>
+                            <input type="text" name="city" class="form-control" placeholder="Mumbai" required style="border-radius:8px; padding:10px;">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-bold" style="font-size:12.5px; color:#475569;">State</label>
+                            <input type="text" name="state" class="form-control" placeholder="Maharashtra" required style="border-radius:8px; padding:10px;">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label class="form-label fw-bold" style="font-size:12.5px; color:#475569;">Postal Code</label>
+                            <input type="text" name="postal_code" class="form-control" placeholder="400001" required style="border-radius:8px; padding:10px;">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-bold" style="font-size:12.5px; color:#475569;">Address Type</label>
+                            <select name="address_type" class="form-select" style="border-radius:8px; padding:10px;">
+                                <option value="Home">Home (Delivery all day)</option>
+                                <option value="Work">Work (Delivery 9 AM - 6 PM)</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="is_default" id="is_default" style="cursor:pointer;">
+                        <label class="form-check-label fw-semibold" for="is_default" style="font-size:13px; cursor:pointer;">Set as my default address</label>
+                    </div>
+                </div>
+                <div class="modal-footer" style="background:#f8fafc; border-top:1px solid var(--border-color); padding: 15px 24px;">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" style="border-radius:20px; font-weight:600; font-size:13px; padding:6px 16px;">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="border-radius:20px; font-weight:600; font-size:13px; padding:6px 20px; background-color:var(--primary-color); border:none;">Save Address</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

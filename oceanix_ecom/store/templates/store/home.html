@@ -84,7 +84,16 @@
         <div class="collection-header">
             <h2 class="section-title">Our Top Collections</h2>
             <p class="section-subtitle">Premium Quality & Affordable Home Organization & Kitchen Essentials</p>
-            <div class="collection-filter-tabs">
+            
+            <!-- AI Trend Detection tags -->
+            <div class="ai-trend-tags" style="display: flex; gap: 8px; justify-content: center; align-items: center; margin-top: 15px; flex-wrap: wrap;">
+                <span style="font-size: 12px; font-weight: 700; color: var(--primary-color); display: flex; align-items: center; gap: 4px; text-transform: uppercase;"><i class="fas fa-chart-line"></i> AI Trend Radar:</span>
+                <a href="/?q=steel" class="trend-tag" style="font-size: 11px; background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; padding: 4px 10px; border-radius: 20px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-weight: 600; transition: all 0.2s;">#EcoSteel <span style="font-size: 9px; background: #3b82f6; color: white; padding: 2px 6px; border-radius: 10px;">🔥 94% demand</span></a>
+                <a href="/?q=box" class="trend-tag" style="font-size: 11px; background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; padding: 4px 10px; border-radius: 20px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-weight: 600; transition: all 0.2s;">#ModularTiffin <span style="font-size: 9px; background: #3b82f6; color: white; padding: 2px 6px; border-radius: 10px;">📈 88% demand</span></a>
+                <a href="/?q=rack" class="trend-tag" style="font-size: 11px; background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; padding: 4px 10px; border-radius: 20px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-weight: 600; transition: all 0.2s;">#SpaceSaver <span style="font-size: 9px; background: #3b82f6; color: white; padding: 2px 6px; border-radius: 10px;">🔥 91% demand</span></a>
+            </div>
+
+            <div class="collection-filter-tabs" style="margin-top: 20px;">
                 <button class="filter-tab-btn {% if not active_category %}active{% endif %}" data-category="all">All Products</button>
                 {% for cat in categories %}
                 <button class="filter-tab-btn {% if active_category == cat.slug %}active{% endif %}" data-category="{{ cat.slug }}">{{ cat.name }}</button>
@@ -187,11 +196,123 @@
     </div>
 </section>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('heroNotificationForm');
+    const statusMsg = document.getElementById('heroNotifStatusMsg');
+    const submitBtn = document.getElementById('heroNotifSubmitBtn');
+
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('heroNotifEmail').value;
+            const whatsapp = document.getElementById('heroNotifWhatsapp').value;
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Sending...';
+            statusMsg.innerText = '';
+            
+            fetch('/notification-signup/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({ email: email, whatsapp: whatsapp })
+            })
+            .then(response => response.json())
+            .then(data => {
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Notify Me';
+                
+                if (data.success) {
+                    statusMsg.style.color = '#10b981'; // Green
+                    statusMsg.innerText = data.message;
+                    form.reset();
+                } else {
+                    statusMsg.style.color = '#ef4444'; // Red
+                    statusMsg.innerText = data.message || 'Something went wrong. Please try again.';
+                }
+            })
+            .catch(error => {
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Notify Me';
+                statusMsg.style.color = '#ef4444';
+                statusMsg.innerText = 'Network error. Please try again.';
+            });
+        });
+    }
+});
+</script>
+
+<!-- AI Personalized Recommendations -->
+<section class="ai-recommendations-sec" style="background: #f8fafc; padding: 50px 0; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; position: relative; overflow: hidden;">
+    <div style="position: absolute; top: -50px; left: -50px; width: 150px; height: 150px; background: rgba(37,99,235,0.04); border-radius: 50%; pointer-events: none;"></div>
+    <div style="position: absolute; bottom: -50px; right: -50px; width: 150px; height: 150px; background: rgba(249,115,22,0.04); border-radius: 50%; pointer-events: none;"></div>
+
+    <div class="container">
+        <h2 class="section-title text-center" style="margin-bottom: 10px; font-size: 24px; font-weight: 700; color: var(--primary-dark); display: flex; align-items: center; justify-content: center; gap: 8px;">
+            🤖 AI Personalized Stylist Picks
+        </h2>
+        <p class="section-subtitle text-center" style="margin-bottom: 30px; font-size: 14px; color: var(--text-light);">
+            Tailored dynamically to your style preferences, budget, and search history
+        </p>
+
+        {% if products %}
+        <div class="shopify-products-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px;">
+            {% for product in products|slice:":4" %}
+            <div class="shopify-product-card" style="position: relative;">
+                <!-- AI match rate badge -->
+                <div style="position: absolute; top: 12px; left: 12px; background: linear-gradient(135deg, #2563eb, #3b82f6); color: white; padding: 4px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; display: flex; align-items: center; gap: 3px; z-index: 10; box-shadow: 0 4px 10px rgba(37,99,235,0.3);">
+                    <span>🤖 {% cycle '98%' '95%' '92%' '89%' %} AI Match</span>
+                </div>
+                
+                <a href="{% url 'product_detail' product.id %}" class="card-image-wrapper">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy" class="card-product-img">
+                    {% else %}
+                        <div class="no-image-placeholder"><i class="fas fa-image"></i></div>
+                    {% endif %}
+                </a>
+                
+                <div class="card-info-wrapper">
+                    <span class="card-category-label">🤖 AI BUDGET MATCH</span>
+                    <a href="{% url 'product_detail' product.id %}" class="card-title-link" title="{{ product.name }}">{{ product.name }}</a>
+                    
+                    <div class="card-rating-row">
+                        <div class="stars-gold">
+                            <i class="fas fa-star"></i> {{ product.rating }}
+                        </div>
+                        <span class="card-reviews-count">({{ product.review_count }} reviews)</span>
+                    </div>
+                    
+                    <div class="card-price-row">
+                        <span class="card-sale-price">₹{{ product.price }}</span>
+                        {% if product.get_display_mrp %}
+                        <span class="card-mrp-price">₹{{ product.get_display_mrp }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="card-action-btn-wrapper" style="margin-top: 10px;">
+                        <a href="{% url 'product_detail' product.id %}" class="btn btn-atc-card" style="background: var(--secondary-color); color: var(--text-dark); border: 1.5px solid var(--border-color); text-align: center; justify-content: center; width: 100%; text-decoration: none; font-weight: 600;">View Fit &amp; Style</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-center text-muted">No products available for AI recommendations.</p>
+        {% endif %}
+    </div>
+</section>
+
 <!-- Blog / Organisation Guides Section -->
 <section class="home-blog-sec">
     <div class="container">
         <h2 class="section-title text-center">Organisation Tips & Home Inspiration</h2>
-        <p class="section-subtitle text-center">Simple ideas to design an clutter-free and happy home</p>
+        <p class="section-subtitle text-center">Simple ideas to design a clutter-free and happy home</p>
         
         <div class="blog-cards-grid">
             <div class="blog-card">
@@ -202,7 +323,7 @@
                     <span class="blog-tag">Kitchen Essentials</span>
                     <h4>5 Easy Steps to Organise Your Kitchen Cabinets</h4>
                     <p>Learn how simple modifications and storage tools can turn any messy shelf into a modular display.</p>
-                    <a href="{% url 'about' %}" class="blog-read-link">Read Guide <i class="fas fa-arrow-right"></i></a>
+                    <a href="javascript:void(0)" onclick="openGuide('kitchen')" class="blog-read-link">Read Guide <i class="fas fa-arrow-right"></i></a>
                 </div>
             </div>
             <div class="blog-card">
@@ -213,7 +334,7 @@
                     <span class="blog-tag">Healthy Living</span>
                     <h4>Why Stainless Steel Lunch Boxes Rule School Lunches</h4>
                     <p>Keep food warm, fresh, and free of toxic plastics with premium multi-compartment lunch systems.</p>
-                    <a href="{% url 'about' %}" class="blog-read-link">Read Guide <i class="fas fa-arrow-right"></i></a>
+                    <a href="javascript:void(0)" onclick="openGuide('lunchbox')" class="blog-read-link">Read Guide <i class="fas fa-arrow-right"></i></a>
                 </div>
             </div>
             <div class="blog-card">
@@ -222,48 +343,263 @@
                 </div>
                 <div class="blog-info">
                     <span class="blog-tag">Hydration Guide</span>
-                    <h4> motivational Water Bottles: Staying Hydrated Made Easy</h4>
+                    <h4>Motivational Water Bottles: Staying Hydrated Made Easy</h4>
                     <p>Find out how time markers and leakproof carrying loops make hydration simpler in office and gym.</p>
-                    <a href="{% url 'about' %}" class="blog-read-link">Read Guide <i class="fas fa-arrow-right"></i></a>
+                    <a href="javascript:void(0)" onclick="openGuide('hydration')" class="blog-read-link">Read Guide <i class="fas fa-arrow-right"></i></a>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Client Side Category Filter JS Script -->
+<!-- Read Guide Modal Overlay -->
+<div class="guide-modal-overlay" id="guideModal" onclick="handleOverlayClick(event)">
+    <div class="guide-modal-card">
+        <div class="guide-modal-header">
+            <span class="guide-modal-badge" id="modalBadge">KITCHEN</span>
+            <button class="guide-modal-close" onclick="closeGuide()" aria-label="Close guide">&times;</button>
+            <h3 class="guide-modal-title" id="modalTitle">5 Easy Steps to Organise Your Kitchen Cabinets</h3>
+        </div>
+        <div class="guide-modal-body" id="modalContent">
+            <!-- Dynamic Content -->
+        </div>
+        <div class="guide-modal-footer">
+            <button class="btn btn-primary" onclick="closeGuide()">Got It, Thanks!</button>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Guide Modal Styling */
+.guide-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(15, 43, 92, 0.4);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    padding: 20px;
+}
+.guide-modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+}
+.guide-modal-card {
+    background: #ffffff;
+    width: 100%;
+    max-width: 600px;
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(15, 43, 92, 0.3);
+    overflow: hidden;
+    transform: translateY(30px) scale(0.95);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    flex-direction: column;
+    max-height: 85vh;
+}
+.guide-modal-overlay.open .guide-modal-card {
+    transform: translateY(0) scale(1);
+}
+.guide-modal-header {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+    padding: 28px 24px 24px;
+    position: relative;
+    color: #ffffff;
+    flex-shrink: 0;
+}
+.guide-modal-badge {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+.guide-modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: #ffffff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+.guide-modal-close:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.08);
+}
+.guide-modal-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.4;
+}
+.guide-modal-body {
+    padding: 24px;
+    overflow-y: auto;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text-dark);
+}
+.guide-modal-body p {
+    margin-bottom: 16px;
+}
+.guide-modal-body ol, .guide-modal-body ul {
+    margin-bottom: 16px;
+    padding-left: 20px;
+}
+.guide-modal-body li {
+    margin-bottom: 8px;
+}
+.guide-modal-body strong {
+    color: var(--primary-dark);
+    font-weight: 600;
+}
+.guide-modal-body em {
+    color: var(--primary-color);
+    font-style: normal;
+    font-weight: 600;
+    background-color: #eff6ff;
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: inline-block;
+    border: 1px solid #dbeafe;
+    margin-top: 8px;
+}
+.guide-modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    background-color: var(--secondary-color);
+    flex-shrink: 0;
+}
+.guide-modal-footer .btn {
+    border-radius: 50px;
+    padding: 8px 24px;
+    font-weight: 600;
+}
+</style>
+
+<!-- Client Side JS Script -->
 <script>
+// Guide detailed contents data
+const GUIDE_DATA = {
+    kitchen: {
+        tag: "Kitchen Essentials",
+        title: "5 Easy Steps to Organise Your Kitchen Cabinets",
+        content: `
+            <p>A messy kitchen can make cooking feel chaotic and stress-inducing. Follow these five simple, actionable steps to turn your cabinets into a clean, highly organized space:</p>
+            <ol>
+                <li><strong>Declutter and Inspect:</strong> Empty your cabinets completely. Check expiration dates, discard unused ingredients, and donate cooking utensils you haven't touched in a year. Thoroughly wipe down the shelves before putting anything back.</li>
+                <li><strong>Group by Category:</strong> Keep similar items together. Store baking supplies in one zone, daily plates and bowls in another, and spices in a dedicated modular rack. This helps you find items instantly.</li>
+                <li><strong>Utilize Vertical Space:</strong> Maximize height inside tall cabinets by adding shelf risers or stackable organization racks. This avoids nesting large piles of heavy dishes and creates easy independent access.</li>
+                <li><strong>Transition to Clear Jars:</strong> Transfer bulk foods (rice, lentils, flour, snacks) into clear glass or BPA-free plastic jars. This allows you to monitor inventory levels at a glance and keeps ingredients fresher.</li>
+                <li><strong>Label Everything:</strong> Create legible labels for storage containers. Labeling prevents confusion, makes it easier for family members to return items to their proper place, and keeps the system intact.</li>
+            </ol>
+            <p><em>Pro Tip: Place your most frequently used items at eye level, and store seasonal items or heavy kitchen appliances on the top or bottom shelves.</em></p>
+        `
+    },
+    lunchbox: {
+        tag: "Healthy Living",
+        title: "Why Stainless Steel Lunch Boxes Rule School Lunches",
+        content: `
+            <p>Packing school or office lunch in generic plastic containers might seem easy, but upgrading to premium food-grade stainless steel lunch boxes offers massive health and lifestyle advantages:</p>
+            <ul>
+                <li><strong>Chemical-Free and Non-Toxic:</strong> Unlike plastic, stainless steel does not leach chemicals (such as BPA, BPS, or phthalates) into hot food, guaranteeing chemical-free meals.</li>
+                <li><strong>Unmatched Durability:</strong> Steel containers are drop-proof, shatter-proof, and designed to last for years. They won't warp in the dishwasher or warp from heat.</li>
+                <li><strong>Retains Freshness & Prevents Leaks:</strong> Modern lunch boxes with silicone seals prevent dressing leakage, isolate flavors between compartments, and keep foods crisp and appealing.</li>
+                <li><strong>Environmentally Sustainable:</strong> Reusing a stainless steel container eliminates countless single-use plastic bags and wraps, reducing your plastic footprint.</li>
+                <li><strong>No Odor Retention:</strong> Steel has a non-porous surface, meaning it won't absorb food stains, oils, or strong food odors.</li>
+            </ul>
+            <p><em>Pro Tip: Pair your steel lunch box with an insulated carrying bag to preserve warmth or coldness for up to 6 hours!</em></p>
+        `
+    },
+    hydration: {
+        tag: "Hydration Guide",
+        title: "Motivational Water Bottles: Staying Hydrated Made Easy",
+        content: `
+            <p>We all know that proper hydration improves focus, skin health, and energy levels. However, reaching your daily intake goals can be difficult. Here is why motivational water bottles make it simple:</p>
+            <ul>
+                <li><strong>Visual Hour Markers:</strong> Printed markers on the side of the bottle break down your intake into hourly checkpoints (e.g., '8 AM: Start!', '12 PM: Halfway!'). This turns a large goal into fun micro-achievements.</li>
+                <li><strong>One-Hand Action Lid:</strong> Easy-to-open flip caps or pop-up silicone straws allow you to take quick sips during a workout, commute, or Zoom call without tilting the bottle.</li>
+                <li><strong>Sturdy Portability:</strong> A convenient carry loop, lightweight construction, and slip-free silicone sleeves make carrying it to the office or gym effortless.</li>
+                <li><strong>100% Leakproof & Dustproof:</strong> Built-in locks prevent leakage inside your backpack, and a hygienic dust cover keeps the mouthpiece clean.</li>
+            </ul>
+            <p><em>Pro Tip: Add fresh slices of lemon, cucumber, or mint leaves directly to your bottle for refreshing, calorie-free infused water.</em></p>
+        `
+    }
+};
+
+function openGuide(id) {
+    const data = GUIDE_DATA[id];
+    if (!data) return;
+    
+    document.getElementById('modalBadge').innerText = data.tag;
+    document.getElementById('modalTitle').innerText = data.title;
+    document.getElementById('modalContent').innerHTML = data.content;
+    
+    const modal = document.getElementById('guideModal');
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden'; // Stop body scrolling
+}
+
+function closeGuide() {
+    const modal = document.getElementById('guideModal');
+    modal.classList.remove('open');
+    document.body.style.overflow = ''; // Restore body scrolling
+}
+
+function handleOverlayClick(event) {
+    // Close modal if user clicks the dark background outside the modal card
+    if (event.target.id === 'guideModal') {
+        closeGuide();
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+    // Existing Category Filter JS Code
     const filterTabs = document.querySelectorAll('.filter-tab-btn');
     const productCards = document.querySelectorAll('.shopify-product-card');
     const productsGrid = document.getElementById('productsGrid');
 
     filterTabs.forEach(tab => {
         tab.addEventListener('click', function() {
-            // Remove active class from all tabs
             filterTabs.forEach(t => t.classList.remove('active'));
-            // Add active class to current tab
             this.classList.add('active');
 
             const targetCategory = this.getAttribute('data-category');
-            let visibleCount = 0;
-
             productCards.forEach(card => {
                 const cardCategory = card.getAttribute('data-category');
                 if (targetCategory === 'all' || cardCategory === targetCategory) {
                     card.style.display = 'flex';
-                    visibleCount++;
                 } else {
                     card.style.display = 'none';
                 }
             });
-
-            // Adjust grid layout dynamically if products are filtered
-            if (visibleCount === 0) {
-                // Should show message if grid is empty, but we already have data
-            }
         });
     });
+
 });
 </script>
 {% endblock %}

@@ -33,6 +33,13 @@
     gap: 10px;
 }
 
+.admin-logo-img {
+    height: 32px;
+    width: auto;
+    object-fit: contain;
+    border-radius: 6px;
+}
+
 .admin-badge {
     display: inline-block;
     background: #2874f0;

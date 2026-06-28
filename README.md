@@ -1,176 +1,158 @@
 # 🌊 OCEANIX — Premium Home Organisation & Kitchen Store
 
-> **Good Quality & Affordable Home Organization, Kitchen – Home Essentials**
-
-OCEANIX is a full-featured Django e-commerce web application for premium home organisation and kitchen essentials. It features a modern blue-themed storefront, a complete shopping cart & order flow, and a dedicated **Super Admin Panel** with inventory management, order tracking, and printable invoices.
-
----
-
-## 🖼️ Screenshots
-
-### 🏠 Home / Storefront
-![Home Page](docs/screenshots/home_full.png)
-
-### 🔝 Hero Section & Category Filters
-![Home Hero](docs/screenshots/home_hero.png)
-
-### 📄 Homepage (scrolled)
-![Homepage Scrolled](docs/screenshots/home_scrolled.png)
-
-### ℹ️ About Page
-![About Page](docs/screenshots/about.png)
-
-### 📞 Contact Page
-![Contact Page](docs/screenshots/contact.png)
-
-### 🔐 Admin Login Portal
-![Admin Login](docs/screenshots/admin_login_full.png)
+> **Good Quality & Affordable Home Organization, Kitchen & Home Essentials**
+>
+> OCEANIX is a full-featured, production-ready Django e-commerce platform for premium home organisation and kitchen essentials. It features a modern blue-themed storefront, complex customer account workflows (subscriptions, wishlists, address books), a seller panel, and a dedicated Super Admin Console with inline inventory management, order tracking, and printable PDF/tax invoices.
 
 ---
 
-## ✨ Features
+## 🎨 Visual Showcase & Screenshot Gallery
 
-### 🛒 Storefront
-- Modern, premium blue-themed UI inspired by leading home-goods retailers
-- Responsive header with announcement bar, search, login/signup
-- Category filter tabs (Drinkware, Home Essentials, Kitchen, Lunch Boxes)
-- Product cards with discount badges, star ratings, pricing, and delivery info
-- Out-of-Stock indicators — automatically shown when stock reaches 0
-- Cart & checkout with Cash on Delivery (COD) support
+Here is a complete tour of the OCEANIX application interface, demonstrating the user journey from storefront to customer account panel, and backend management console:
 
-### 🔑 Super Admin Panel (`/panel/`)
-| Feature | URL |
-|---|---|
-| Admin Login | `/panel/login/` |
-| Dashboard | `/panel/` |
-| Order List | `/panel/orders/` |
-| Order Detail | `/panel/orders/<id>/` |
-| Printable Invoice | `/panel/orders/<id>/bill/` |
-| Inventory Management | `/panel/inventory/` |
+### 🛒 Storefront & Customer Flow
+| View | Description | Screenshot |
+| --- | --- | --- |
+| **01. Storefront Home** | The landing page featuring a premium blue-themed UI, announcement bar, category tabs, and product cards with dynamic discount/out-of-stock badges. | ![Home Page](screenshots/01_home_page.png) |
+| **02. Customer Login** | Sleek, secure customer login page with validation. | ![Customer Login](screenshots/02_login_page.png) |
+| **03. Customer Registration** | Clean sign-up form for new customers. | ![Customer Registration](screenshots/03_register_page.png) |
+| **04. Product Detail Page** | Immersive product page showing details, specifications, real-time stock levels, dynamic ratings, and reviews. | ![Product Detail](screenshots/04_product_detail.png) |
+| **05. Shopping Cart** | Interactive cart showing item summaries, subtotal calculations, and item modification/removal. | ![Shopping Cart](screenshots/05_cart_page.png) |
+| **06. Checkout Flow** | Comprehensive checkout with address selection, B2B company tax/GSTIN details, and multiple payment methods. | ![Checkout Page](screenshots/06_checkout_page.png) |
+| **07. Order Confirmation** | Successful order placement summary with a timeline tracker. | ![Order Confirmation](screenshots/07_order_confirmation.png) |
 
-- **Separate Admin Login** — Navigate to `/panel/login/` and log in with `admin` / `admin`
-- **Dashboard** — Summary cards: Total Orders, Total Revenue, Pending Orders, **Total Products in Hand** (stock aggregation)
-- **Inventory Management** — Inline stock and price editing; quick-adjust buttons (+5, +10, −1, Out of Stock)
-- **Order Management** — View all orders, update statuses, filter by date/status
-- **Printable Invoice** — Print-optimised bill format with customer details, itemised list, totals, and tax
+### 👤 Customer Account Panel
+| View | Description | Screenshot |
+| --- | --- | --- |
+| **08. User Dashboard** | Overview of customer orders, active subscriptions, and profile shortcuts. | ![User Dashboard](screenshots/08_user_dashboard.png) |
+| **09. Profile Management** | Form to edit personal profile info and account preferences. | ![User Profile](screenshots/09_user_profile.png) |
+| **10. Saved Addresses** | Management portal for customer delivery and billing addresses. | ![User Addresses](screenshots/10_user_addresses.png) |
+| **11. Personal Wishlist** | Saved items page showing favorited products with direct add-to-cart actions. | ![User Wishlist](screenshots/11_user_wishlist.png) |
+| **12. Subscriptions Dashboard** | Automated scheduling console enabling daily, weekly, or monthly deliveries of recurring items (e.g. pantry, dairy). | ![User Subscriptions](screenshots/12_user_subscriptions.png) |
+
+### 🛠️ Seller & Admin Portal
+| View | Description | Screenshot |
+| --- | --- | --- |
+| **13. Seller Panel** | A dedicated panel for vendors to monitor vendor-specific products, review pending customer order list, and view earnings. | ![Seller Panel](screenshots/13_seller_panel.png) |
+| **14. Admin Dashboard** | High-level metrics view displaying Total Orders, Total Revenue, Pending Orders, and Total Products in Hand (stock aggregation). | ![Admin Dashboard](screenshots/14_admin_dashboard.png) |
+| **15. Inventory Console** | Interactive inventory manager supporting inline stock/price updates and quick adjustments (+5, +10, -1, Out-of-Stock). | ![Admin Inventory](screenshots/15_admin_inventory.png) |
+| **16. Admin Orders Management**| Track, filter, update statuses of customer purchases, and print out-of-box tax bills/invoices. | ![Admin Orders](screenshots/16_admin_orders.png) |
 
 ---
 
-## 🚀 Getting Started
+## ✨ Features Breakdown
+
+### 🛍️ Customer Experience
+- **Premium Blue-Themed UI:** Highly-responsive storefront designed with CSS glassmorphism, tailored gradients, and premium typography (Inter font).
+- **Dynamic Category Filter:** Seamless product filtering across home categories.
+- **Advanced Wishlist & Cart:** Real-time adding, removing, and state management of items.
+- **B2B Billing Support:** Customers can tick a checkbox at checkout to input company details, name, and **GSTIN** for professional tax invoicing.
+- **Subscription Engine:** Schedule product deliveries on a recurring daily, weekly, or monthly interval.
+- **Address Book:** Save multiple addresses and select one dynamically during checkout.
+
+### 💼 Seller & Admin Capabilities
+- **Seller Panel (`/seller/panel/`):** Independent portal for merchant partners to view shop stats, list items, and track orders.
+- **Admin Dashboard (`/panel/`):** Summary analytics with KPI metrics, order histories, and visual reports.
+- **Inline Stock Manager:** One-click inventory modification without reloading pages.
+- **Printable Invoices:** Optimized print templates containing shop branding, customer details, tax breakdowns, and order timestamps.
+
+### 💳 Integrations
+- **Razorpay Payments:** Online payment portal flow with webhook/signature verification support.
+- **Cash on Delivery (COD):** Secure checkout flow for manual/physical collections.
+
+---
+
+## 🚀 Getting Started & Installation
+
+Follow these steps to set up and run the project locally on your machine:
 
 ### Prerequisites
-- Python 3.10+
-- pip
+- **Python 3.10+**
+- **Git**
+- **pip** (Python package installer)
 
-### Installation
+### Setup Instructions
 
-```bash
-# 1. Clone the repository
-git clone https://github.com/kakkarot23/Oceanix.git
-cd Oceanix
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/kakkarot23/Learning_Platform.git
+   cd Learning_Platform
+   ```
 
-# 2. Create & activate virtual environment
-python -m venv venv
-venv\Scripts\activate       # Windows
-# source venv/bin/activate  # macOS/Linux
+2. **Create and activate a virtual environment:**
+   * **Windows (PowerShell/CMD):**
+     ```bash
+     python -m venv venv
+     venv\Scripts\activate
+     ```
+   * **macOS/Linux:**
+     ```bash
+     python3 -m venv venv
+     source venv/bin/activate
+     ```
 
-# 3. Install dependencies
-pip install -r requirements.txt
+3. **Install the required packages:**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-# 4. Apply migrations
-cd oceanix_ecom
-python manage.py migrate
+4. **Run database migrations:**
+   ```bash
+   cd oceanix_ecom
+   python manage.py migrate
+   ```
 
-# 5. (Optional) Load sample data / create superuser
-python manage.py createsuperuser
+5. **Load sample database values and admin credentials:**
+   ```bash
+   # Sets up initial catalog products and auto-creates an admin user
+   python manage.py setup_initial_data
+   ```
 
-# 6. Run the development server
-python manage.py runserver
+6. **Start the Django development server:**
+   ```bash
+   python manage.py runserver
+   ```
+
+7. **Access the application:**
+   - **Storefront:** [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+   - **Admin/Seller Panel:** [http://127.0.0.1:8000/panel/login/](http://127.0.0.1:8000/panel/login/)
+
+---
+
+## 🔐 Default Credentials
+
+| Portal / Role | Username | Password | Access Level |
+| --- | --- | --- | --- |
+| **Super Admin Panel** | `admin` | `admin` | Full control over inventory, orders, billing, and system settings |
+| **Django Admin** | `admin` | `admin` | Standard Django admin access (`/admin/`) |
+
+---
+
+## 📁 Repository Structure
+
 ```
-
-Then open **http://127.0.0.1:8000/** in your browser.
-
----
-
-## 🔐 Admin Access
-
-| URL | Credentials |
-|---|---|
-| `/panel/login/` | `admin` / `admin` |
-| `/admin/` (Django admin) | Superuser account |
-
-> The panel login auto-creates & authenticates an `admin` superuser account on first use.
-
----
-
-## 📁 Project Structure
-
+Learning_Platform/ (OCEANIX Workspace)
+├── docs/                        # Project flowcharts and architecture guides
+│   ├── DOCUMENTATION_INDEX.md   # Index of all guides
+│   ├── IMPLEMENTATION_GUIDE.md  # Detailed setup steps and architecture
+│   └── PROJECT_FLOWCHARTS.md    # Mermaid lifecycle diagrams
+├── image/                       # Raw catalog/product mock images
+├── product/                     # Text product descriptions and data
+├── screenshots/                 # Visual tour screenshots shown in README.md
+├── oceanix_ecom/                # Django project root
+│   ├── manage.py                # Django CLI utility
+│   ├── oceanix_ecom/            # Main project configuration (settings, urls)
+│   ├── store/                   # Core application directory
+│   │   ├── models.py            # DB schema definitions (Product, Subscription, Wishlist, etc.)
+│   │   ├── views.py             # View layers & admin controllers
+│   │   ├── urls.py              # URL route mappings
+│   │   ├── forms.py             # Forms (User, Admin, checkout registration)
+│   │   ├── static/              # CSS stylesheets, Javascript helpers
+│   │   └── templates/           # HTML templates (Public pages, user portals, admin dashboard)
+│   └── db.sqlite3               # SQLite database
+├── .gitignore                   # Ignore specifications (venv, cache, local settings)
+└── README.md                    # Main repository documentation
 ```
-OCEANIX/
-├── oceanix_ecom/
-│   ├── manage.py
-│   ├── oceanix_ecom/       # Django project settings
-│   └── store/              # Main e-commerce app
-│       ├── models.py       # Product, Order, Cart, Category models
-│       ├── views.py        # Storefront + Admin views
-│       ├── urls.py         # URL routing
-│       ├── decorators.py   # staff_required decorator
-│       ├── forms.py        # Login, Registration, Order forms
-│       ├── static/css/     # Custom CSS (style.css, about.css)
-│       └── templates/store/
-│           ├── base.html           # Global layout
-│           ├── home.html           # Storefront homepage
-│           ├── about.html          # About page
-│           └── admin/
-│               ├── base_admin.html # Admin layout
-│               ├── login.html      # Admin login portal
-│               ├── dashboard.html  # Admin dashboard
-│               ├── order_list.html # Orders management
-│               ├── order_detail.html
-│               ├── order_bill.html # Printable invoice
-│               └── inventory.html  # Inventory management
-├── docs/
-│   └── screenshots/        # Page screenshots for README
-└── README.md
-```
-
----
-
-## 🛠️ Tech Stack
-
-| Layer | Technology |
-|---|---|
-| Backend | Django 4.2 |
-| Database | SQLite (development) |
-| Frontend | HTML5, Vanilla CSS, JavaScript |
-| Icons | Font Awesome 6 |
-| Fonts | Google Fonts — Inter |
-| Payments | Cash on Delivery (COD), UPI, Cards (display) |
-
----
-
-## 📦 Key Django Models
-
-| Model | Description |
-|---|---|
-| `Product` | Name, price, stock, category, images, discount |
-| `Category` | Slug-based product categories |
-| `Cart` | User cart session |
-| `CartItem` | Line items in a cart |
-| `Order` | Customer order with address & payment info |
-| `OrderItem` | Products within an order |
-
----
-
-## 🤝 Contributing
-
-Pull requests are welcome. For major changes, please open an issue first to discuss what you'd like to change.
-
----
-
-## 📄 License
-
-This project is for educational/portfolio purposes.
 
 ---
 

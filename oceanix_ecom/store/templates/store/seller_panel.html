@@ -1,0 +1,149 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Seller Panel | OCEANIX{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="transition: all 0.3s;">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="list-group">
+                <a href="{% url 'seller_panel' %}" class="list-group-item list-group-item-action active"><i class="fas fa-chart-line"></i> Seller Dashboard</a>
+                <a href="{% url 'user_dashboard' %}" class="list-group-item list-group-item-action"><i class="fas fa-user-circle"></i> Customer Account</a>
+                <a href="{% url 'home' %}" class="list-group-item list-group-item-action"><i class="fas fa-shopping-bag"></i> Continue Shopping</a>
+            </div>
+            
+            <!-- Quick Seller Tips -->
+            <div class="card mt-4" style="border: 1px solid var(--border-color); border-radius: 12px; background: #fafafa; padding: 15px; text-align: left;">
+                <h6 style="color: var(--primary-dark); font-weight:700; margin-bottom:8px;"><i class="fas fa-lightbulb" style="color:var(--accent-orange);"></i> Multi-Vendor Tips</h6>
+                <p style="font-size:12px; color: var(--text-light); line-height:1.5; margin:0;">
+                    Keep listings updated with SKU numbers and high-quality videos to increase customer conversion rates by up to 25%!
+                </p>
+            </div>
+        </div>
+        
+        <!-- Main Panel Content -->
+        <div class="col-md-9" style="text-align: left;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
+                <h2 style="margin:0; font-weight:700; color:var(--primary-dark);">🛍️ Seller Hub Dashboard</h2>
+                <span class="badge bg-primary" style="font-size:12px; background-color: var(--primary-color) !important; padding:6px 12px; border-radius:20px;">🎖️ Gold Tier Verified Seller</span>
+            </div>
+
+            <!-- Seller Stats Row -->
+            <div class="row mb-4">
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <div class="card text-center" style="border:1px solid var(--border-color); border-radius:12px; padding:15px; background:#ffffff;">
+                        <h6 class="text-muted" style="font-size:11.5px; font-weight:600; text-transform:uppercase; margin-bottom:6px;">Total Revenue</h6>
+                        <h4 style="font-weight:700; color:var(--primary-color); margin:0;">₹{{ stats.total_sales }}</h4>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <div class="card text-center" style="border:1px solid var(--border-color); border-radius:12px; padding:15px; background:#ffffff;">
+                        <h6 class="text-muted" style="font-size:11.5px; font-weight:600; text-transform:uppercase; margin-bottom:6px;">Items Sold</h6>
+                        <h4 style="font-weight:700; color:var(--primary-color); margin:0;">{{ stats.items_sold }} units</h4>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <div class="card text-center" style="border:1px solid var(--border-color); border-radius:12px; padding:15px; background:#ffffff;">
+                        <h6 class="text-muted" style="font-size:11.5px; font-weight:600; text-transform:uppercase; margin-bottom:6px;">Pending Orders</h6>
+                        <h4 style="font-weight:700; color:var(--accent-orange); margin:0;">{{ stats.pending_orders }} orders</h4>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <div class="card text-center" style="border:1px solid var(--border-color); border-radius:12px; padding:15px; background:#ffffff;">
+                        <h6 class="text-muted" style="font-size:11.5px; font-weight:600; text-transform:uppercase; margin-bottom:6px;">Payout Wallet</h6>
+                        <h4 style="font-weight:700; color:#10b981; margin:0;">₹{{ stats.payout_balance }}</h4>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seller Catalog / Listings -->
+            <div class="card mb-4" style="border: 1px solid var(--border-color); border-radius: 12px;">
+                <div class="card-body">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                        <h5 class="card-title fw-bold" style="color: var(--primary-dark); margin:0;"><i class="fas fa-boxes-stacked"></i> My Active Listings</h5>
+                        <button class="btn btn-sm btn-primary" onclick="alert('🤖 Simulated Product Creation Form Launched! Staff can add products on Home page.')" style="border-radius:20px; font-size:11px; font-weight:600;">+ List New Product</button>
+                    </div>
+                    <hr>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover align-middle" style="font-size:13px; margin:0;">
+                            <thead>
+                                <tr style="background:#f8fafc;">
+                                    <th>Image</th>
+                                    <th>Product Name</th>
+                                    <th>Price</th>
+                                    <th>Stock</th>
+                                    <th>Rating</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for product in products %}
+                                <tr>
+                                    <td>
+                                        {% if product.image %}
+                                        <img src="{{ product.image.url }}" style="width:36px; height:36px; object-fit:contain; border-radius:4px;">
+                                        {% else %}
+                                        <span class="text-muted">No Img</span>
+                                        {% endif %}
+                                    </td>
+                                    <td><a href="{% url 'product_detail' product.id %}" style="text-decoration:none; color:inherit; font-weight:600;">{{ product.name }}</a></td>
+                                    <td class="fw-bold">₹{{ product.price }}</td>
+                                    <td>
+                                        {% if product.stock > 5 %}
+                                        <span class="text-success">{{ product.stock }} In Stock</span>
+                                        {% elif product.stock > 0 %}
+                                        <span class="text-warning">{{ product.stock }} Low Stock</span>
+                                        {% else %}
+                                        <span class="text-danger">Out of Stock</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>⭐ {{ product.rating }}</td>
+                                    <td>
+                                        <a href="{% url 'edit_product' product.id %}" class="btn btn-sm btn-outline-warning p-1" style="font-size:11px; border-radius:10px;"><i class="fas fa-edit"></i></a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seller Payouts & Transaction History -->
+            <div class="card" style="border: 1px solid var(--border-color); border-radius: 12px;">
+                <div class="card-body">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                        <h5 class="card-title fw-bold" style="color: var(--primary-dark); margin:0;"><i class="fas fa-wallet"></i> Payout Withdrawal History</h5>
+                        <button class="btn btn-sm btn-outline-success" onclick="alert('🤖 Payout Requested! ₹15,400.00 will be credited to your saved bank account.')" style="border-radius:20px; font-size:11px; font-weight:600;">Request Payout</button>
+                    </div>
+                    <hr>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover" style="font-size:12px; margin:0;">
+                            <thead>
+                                <tr style="background:#f8fafc;">
+                                    <th>Transaction ID</th>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for tx in transactions %}
+                                <tr>
+                                    <td class="fw-bold">{{ tx.id }}</td>
+                                    <td>{{ tx.date }}</td>
+                                    <td>₹{{ tx.amount }}</td>
+                                    <td><span class="badge bg-success" style="font-size:10px;">{{ tx.status|upper }}</span></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

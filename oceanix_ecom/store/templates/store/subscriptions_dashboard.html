@@ -1,0 +1,79 @@
+{% extends 'store/base.html' %}
+
+{% block title %}My Subscriptions | OCEANIX{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="transition: all 0.3s;">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="list-group">
+                <a href="{% url 'user_dashboard' %}" class="list-group-item list-group-item-action">Dashboard</a>
+                <a href="{% url 'user_profile' %}" class="list-group-item list-group-item-action">Profile</a>
+                <a href="{% url 'user_addresses' %}" class="list-group-item list-group-item-action">Addresses</a>
+                <a href="{% url 'order_history' %}" class="list-group-item list-group-item-action">Order History</a>
+                <a href="{% url 'subscriptions_dashboard' %}" class="list-group-item list-group-item-action active"><i class="fas fa-sync-alt"></i> My Subscriptions</a>
+                <a href="{% url 'logout' %}" class="list-group-item list-group-item-action text-danger">Logout</a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9" style="text-align: left;">
+            <h2 class="mb-4" style="font-weight:700; color:var(--primary-dark);"><i class="fas fa-sync-alt"></i> My Active Subscriptions</h2>
+            
+            {% if subscriptions %}
+                <div class="row">
+                    {% for sub in subscriptions %}
+                    <div class="col-md-12 mb-3">
+                        <div class="card" style="border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+                            <div class="card-body">
+                                <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
+                                    <div>
+                                        <span class="badge bg-success mb-2" style="font-size:10px;">🟢 {{ sub.status|upper }}</span>
+                                        <h5 class="fw-bold" style="color:var(--primary-dark); margin-bottom:8px;">{{ sub.product_name }}</h5>
+                                        
+                                        <div style="font-size:13px; line-height:1.6; color:var(--text-light);">
+                                            <strong>Subscription ID:</strong> {{ sub.id }}<br>
+                                            <strong>Interval:</strong> {{ sub.frequency }}<br>
+                                            <strong>Estimated Next Delivery:</strong> {{ sub.next_delivery }}<br>
+                                            <strong>Payment Mode:</strong> {{ sub.payment_method }}
+                                        </div>
+                                    </div>
+                                    <div style="text-align:right;">
+                                        <span style="font-size:12px; color:var(--text-light); display:block;">Subscription Price:</span>
+                                        <strong style="font-size:20px; color:var(--primary-color);">₹{{ sub.price }}</strong>
+                                        <span style="font-size:10.5px; color:#16a34a; font-weight:700; display:block;"><i class="fas fa-tag"></i> 10% Auto-Ship Discount</span>
+                                    </div>
+                                </div>
+                                <hr style="border-color:var(--border-color); margin:15px 0;">
+                                <div style="display:flex; gap:10px; justify-content:flex-end;">
+                                    <button onclick="alert('🤖 Subscription Paused! Next auto-delivery on hold.')" class="btn btn-sm btn-outline-warning" style="border-radius:20px; font-size:11.5px; font-weight:600;"><i class="fas fa-pause"></i> Pause Subscription</button>
+                                    <button onclick="cancelSubscription('{{ sub.id }}')" class="btn btn-sm btn-outline-danger" style="border-radius:20px; font-size:11.5px; font-weight:600;"><i class="fas fa-times"></i> Cancel Subscription</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="card p-5 text-center" style="border: 1px solid var(--border-color); border-radius: 12px;">
+                    <i class="fas fa-arrows-spin text-muted mb-3" style="font-size:48px;"></i>
+                    <h5 class="text-muted">You do not have any active subscriptions.</h5>
+                    <p style="font-size:13px; color:var(--text-light);">Save 10% on automatic monthly deliveries. Simply select 'Subscribe &amp; Save' on any product detail page.</p>
+                    <a href="{% url 'home' %}" class="btn btn-primary mx-auto mt-2" style="border-radius:20px; padding:8px 24px;">Explore Catalog</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+function cancelSubscription(id) {
+    const confirmation = confirm("⚠️ Are you sure you want to cancel subscription " + id + "? You will lose the 10% discount on future orders.");
+    if (confirmation) {
+        alert("Subscription cancelled successfully!");
+        window.location.reload();
+    }
+}
+</script>
+{% endblock %}

@@ -30,18 +30,32 @@ class UserLoginForm(forms.Form):
 
 
 class OrderForm(forms.ModelForm):
-    """Form for order information with payment method."""
+    """Form for order information with payment method and delivery/gift options."""
     payment_method = forms.ChoiceField(
         choices=Order.PAYMENT_METHOD_CHOICES,
         widget=forms.RadioSelect(attrs={'class': 'payment-radio'}),
         initial='cod',
+    )
+    delivery_slot = forms.ChoiceField(
+        choices=[
+            ('standard', 'Standard Delivery (Any time 9 AM - 9 PM)'),
+            ('morning', 'Morning Delivery (9 AM - 12 PM)'),
+            ('afternoon', 'Afternoon Delivery (12 PM - 3 PM)'),
+            ('evening', 'Evening Delivery (3 PM - 6 PM)'),
+            ('night', 'Late Evening Delivery (6 PM - 9 PM)'),
+        ],
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        initial='standard',
+        required=False
     )
 
     class Meta:
         model = Order
         fields = [
             'first_name', 'last_name', 'email', 'phone',
-            'address', 'city', 'postal_code', 'country', 'payment_method'
+            'address', 'city', 'postal_code', 'country',
+            'payment_method', 'delivery_slot', 'notes',
+            'gift_wrapping', 'gift_message'
         ]
         widgets = {
             'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name'}),
@@ -52,6 +66,9 @@ class OrderForm(forms.ModelForm):
             'city': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'City'}),
             'postal_code': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'PIN Code'}),
             'country': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Country'}),
+            'notes': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Order notes / special instructions (optional)', 'rows': 2}),
+            'gift_message': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Your gift message (optional)', 'rows': 2}),
+            'gift_wrapping': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
 
@@ -143,9 +160,10 @@ class OrderStatusForm(forms.ModelForm):
     """Form for updating order status in admin panel."""
     class Meta:
         model = Order
-        fields = ['status', 'payment_status', 'notes']
+        fields = ['status', 'payment_status', 'return_status', 'notes']
         widgets = {
             'status': forms.Select(attrs={'class': 'form-control'}),
             'payment_status': forms.Select(attrs={'class': 'form-control'}),
+            'return_status': forms.Select(attrs={'class': 'form-control'}),
             'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }

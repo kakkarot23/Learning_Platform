@@ -1,0 +1,21 @@
+PRODUCT ID: 4
+NAME: Ice Infuser Water Bottle with Straw & Handle
+CATEGORY: Drinkware
+PRICE: INR 449.99
+MRP: INR 699.99
+DISCOUNT PERCENT: 35%
+RATING: 4.3 / 5.0
+REVIEWS COUNT: 156
+STOCK: 1
+SHORT DESCRIPTION: BPA-free bottle with built-in ice core and straw
+ACTIVE STATUS: Active
+IMAGE FILE: WhatsApp Image 2026-06-05 at 15.55.56.jpeg
+
+=== HIGHLIGHTS ===
+Built-in ice infuser core
+BPA-free reusable material
+Leakproof lid with straw
+Ergonomic carry handle
+
+=== FULL DESCRIPTION ===
+Stay cool and hydrated with this Ice Bottle featuring a central infuser core for ice cubes and fruits. Includes a convenient straw, leakproof lid, and side handle. Perfect for gym, office, and outdoor activities.

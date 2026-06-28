@@ -98,6 +98,13 @@ body {
     font-size: 28px;
 }
 
+.logo-img {
+    height: 28px;
+    width: auto;
+    object-fit: contain;
+    border-radius: 4px;
+}
+
 .header-center {
     flex-grow: 1;
     max-width: 600px;
@@ -2535,8 +2542,15 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 32px;
-    color: #cbd5e1;
+    font-size: 36px;
+    color: #94a3b8;
+    background-color: #f1f5f9;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.shopify-product-card:hover .no-image-placeholder {
+    background-color: #e2e8f0;
+    color: var(--primary-color);
 }
 
 .card-info-wrapper {
@@ -2821,9 +2835,54 @@ body {
     .hero-slide { padding: 40px 20px; min-height: 300px; }
     .hero-slide-content h1 { font-size: 28px; }
     .features-inner-grid { grid-template-columns: repeat(2, 1fr); }
+
+    /* Responsive Header & Navigation */
+    .header-inner {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-template-rows: auto auto;
+        gap: 15px;
+        align-items: center;
+    }
+    .header-left {
+        grid-column: 1;
+        grid-row: 1;
+    }
+    .header-right {
+        grid-column: 2;
+        grid-row: 1;
+    }
+    .header-center {
+        grid-column: 1 / span 2;
+        grid-row: 2;
+        width: 100%;
+        max-width: none;
+    }
+    .header-actions {
+        gap: 16px;
+    }
+    .header-actions .action-label {
+        display: none; /* Hide 'Cart', 'Orders', etc. text on tablet/mobile */
+    }
+    .header-user-menu .user-name {
+        display: none; /* Hide username on tablet/mobile */
+    }
+    .category-inner {
+        justify-content: flex-start;
+        overflow-x: auto;
+        padding: 10px 5px;
+    }
 }
 
 @media (max-width: 480px) {
     .shopify-products-grid { grid-template-columns: 1fr; }
     .features-inner-grid { grid-template-columns: 1fr; }
+    .header-search input {
+        padding: 10px 45px 10px 15px;
+        font-size: 13px;
+    }
+    .header-search button {
+        width: 36px;
+        height: 36px;
+    }
 }

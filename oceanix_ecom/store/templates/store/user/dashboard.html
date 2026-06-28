@@ -1,0 +1,113 @@
+{% extends 'store/base.html' %}
+
+{% block title %}My Dashboard | OCEANIX{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="list-group">
+                <a href="{% url 'user_dashboard' %}" class="list-group-item list-group-item-action active">Dashboard</a>
+                <a href="{% url 'user_profile' %}" class="list-group-item list-group-item-action">Profile</a>
+                <a href="{% url 'user_addresses' %}" class="list-group-item list-group-item-action">Addresses</a>
+                <a href="{% url 'order_history' %}" class="list-group-item list-group-item-action">Order History</a>
+                <a href="{% url 'user_wishlist' %}" class="list-group-item list-group-item-action">Wishlist</a>
+                <a href="{% url 'logout' %}" class="list-group-item list-group-item-action text-danger">Logout</a>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <h2 class="mb-4">My Dashboard</h2>
+            
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card h-100" style="border: 1px solid var(--border-color); border-radius: 12px;">
+                        <div class="card-body">
+                            <h5 class="card-title" style="font-weight: 700; color: var(--primary-dark);">Profile Info</h5>
+                            <p class="card-text" style="font-size: 13.5px; line-height: 1.6;">
+                                <strong>Name:</strong> {{ request.user.first_name }} {{ request.user.last_name }}<br>
+                                <strong>Email:</strong> {{ request.user.email }}<br>
+                                <strong>Phone:</strong> {{ profile.phone_number|default:"Not set" }}<br>
+                                <strong>Loyalty Points:</strong> {{ profile.loyalty_points }} pts<br>
+                                <strong>Reward Wallet:</strong> ₹{{ profile.wallet_balance }}<br>
+                                <strong>AI Segmentation:</strong> <span class="badge bg-primary" style="font-size: 10px; background-color: var(--primary-color) !important;">🥇 VIP Frequent Buyer</span><br>
+                                <strong>AI Projected CLV:</strong> ₹8,500.00 <span style="font-size: 10px; color: var(--success-color); font-weight: 700;">(Top 5% User)</span>
+                            </p>
+                            <a href="{% url 'user_profile' %}" class="btn btn-sm btn-outline-primary" style="border-radius: 20px; font-size: 12px; font-weight: 600;">Edit Profile</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100" style="border: 1px solid var(--border-color); border-radius: 12px;">
+                        <div class="card-body">
+                            <h5 class="card-title" style="font-weight: 700; color: var(--primary-dark);">Recent Orders</h5>
+                            {% if recent_orders %}
+                                <ul class="list-unstyled" style="font-size: 13.5px; line-height: 1.7;">
+                                    {% for order in recent_orders %}
+                                        <li style="margin-bottom: 8px;">
+                                            <strong>#{{ order.order_number }}</strong> - ₹{{ order.total_amount }} 
+                                            <span class="badge bg-{{ order.status|yesno:'success,warning' }}" style="font-size: 10.5px; padding: 4px 8px; border-radius: 20px;">{{ order.status|title }}</span>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                                <a href="{% url 'order_history' %}" class="btn btn-sm btn-outline-primary mt-2" style="border-radius: 20px; font-size: 12px; font-weight: 600;">View All Orders</a>
+                            {% else %}
+                                <p class="text-muted">No recent orders found.</p>
+                                <a href="{% url 'home' %}" class="btn btn-sm btn-primary" style="border-radius: 20px; font-size: 12px; font-weight: 600;">Start Shopping</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Personal Shopper Preference Center -->
+            <div class="card mb-4" style="border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); text-align: left;">
+                <div class="card-body">
+                    <h5 class="card-title" style="color: var(--primary-dark); font-weight: 700; display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                        🤖 AI Personal Shopper Preference Center
+                    </h5>
+                    <p style="font-size: 13px; color: var(--text-light); margin-bottom: 15px;">
+                        Set your shopping preferences below. Our AI Recommendation Engine will customize matching products across catalog carousels.
+                    </p>
+                    <form id="preferencesForm" method="post" action="">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label style="font-weight: 600; font-size: 12px; display: block; margin-bottom: 6px; color: #475569;">Favorite Material</label>
+                                <select name="pref_material" class="form-control" style="font-size:13px; padding: 8px 12px; border-radius: 8px; background: #f8fafc;">
+                                    <option value="steel">Premium Stainless Steel</option>
+                                    <option value="glass">Borosilicate Glass</option>
+                                    <option value="wood">Natural Bamboo/Wood</option>
+                                    <option value="any" selected>No Preference</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label style="font-weight: 600; font-size: 12px; display: block; margin-bottom: 6px; color: #475569;">Style Preference</label>
+                                <select name="pref_style" class="form-control" style="font-size:13px; padding: 8px 12px; border-radius: 8px; background: #f8fafc;">
+                                    <option value="modern">Modern &amp; Minimalist</option>
+                                    <option value="traditional">Traditional / Classic</option>
+                                    <option value="colorful">Vibrant &amp; Colorful</option>
+                                    <option value="any" selected>No Preference</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label style="font-weight: 600; font-size: 12px; display: block; margin-bottom: 6px; color: #475569;">Target Budget Bracket</label>
+                                <select name="pref_budget" class="form-control" style="font-size:13px; padding: 8px 12px; border-radius: 8px; background: #f8fafc;">
+                                    <option value="under500">Under ₹500.00</option>
+                                    <option value="500to1500" selected>₹500.00 – ₹1,500.00</option>
+                                    <option value="above1500">Above ₹1,500.00</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-primary" style="background-color: var(--primary-color); border: none; padding: 10px 20px; border-radius: 20px; font-weight: 700; font-size: 12px; cursor: pointer; color: white;">
+                            Save AI Preferences
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

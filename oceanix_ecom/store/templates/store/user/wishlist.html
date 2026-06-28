@@ -1,0 +1,64 @@
+{% extends 'store/base.html' %}
+
+{% block title %}My Wishlist | OCEANIX{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="list-group">
+                <a href="{% url 'user_dashboard' %}" class="list-group-item list-group-item-action">Dashboard</a>
+                <a href="{% url 'user_profile' %}" class="list-group-item list-group-item-action">Profile</a>
+                <a href="{% url 'user_addresses' %}" class="list-group-item list-group-item-action">Addresses</a>
+                <a href="{% url 'order_history' %}" class="list-group-item list-group-item-action">Order History</a>
+                <a href="{% url 'user_wishlist' %}" class="list-group-item list-group-item-action active">Wishlist</a>
+                <a href="{% url 'logout' %}" class="list-group-item list-group-item-action text-danger">Logout</a>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <h2 class="mb-4">My Wishlist</h2>
+            
+            {% if wishlist_products %}
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% for product in wishlist_products %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" class="card-img-top p-3" alt="{{ product.name }}" style="height: 200px; object-fit: contain;">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title text-truncate">{{ product.name }}</h5>
+                            <p class="card-text text-primary mb-2 fw-bold">₹{{ product.price }}</p>
+                            <div class="d-flex flex-column gap-2">
+                                <a href="{% url 'product_detail' product.pk %}" class="btn btn-outline-primary btn-sm">View Details</a>
+                                <form action="{% url 'add_to_cart' product.pk %}" method="POST" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="btn btn-primary btn-sm w-100" {% if product.stock <= 0 %}disabled{% endif %}>
+                                        <i class="fas fa-shopping-cart"></i> Add to Cart
+                                    </button>
+                                </form>
+                                <a href="{% url 'remove_from_wishlist' product.pk %}" class="btn btn-outline-danger btn-sm text-decoration-none">
+                                    <i class="fas fa-trash"></i> Remove
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="alert alert-info text-center py-5">
+                <i class="fas fa-heart fa-3x mb-3 text-muted"></i>
+                <h5>Your wishlist is empty!</h5>
+                <p>Save items you love here to easily find them later.</p>
+                <a href="{% url 'home' %}" class="btn btn-primary mt-2">Start Shopping</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

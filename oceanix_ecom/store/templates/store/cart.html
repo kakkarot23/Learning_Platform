@@ -67,11 +67,39 @@
                     <span class="free-text">FREE</span>
                 </div>
                 <div class="summary-divider"></div>
+                {% if cart.applied_coupon %}
+                <div class="summary-row text-success">
+                    <span>Coupon Applied ({{ cart.applied_coupon.code }})</span>
+                    <span>-₹{{ cart.get_discount_amount }}</span>
+                </div>
+                <div class="summary-divider"></div>
+                {% endif %}
                 <div class="summary-row total">
                     <span>Total Amount</span>
-                    <span class="total-amount">₹{{ cart.get_total_price }}</span>
+                    <span class="total-amount">₹{{ cart.get_final_price }}</span>
                 </div>
-                <p class="savings-text">You will save on delivery!</p>
+                
+                <div class="coupon-section mt-3 mb-3">
+                    {% if cart.applied_coupon %}
+                        <form method="post" action="{% url 'remove_coupon' %}" class="d-flex w-100">
+                            {% csrf_token %}
+                            <div class="alert alert-success d-flex justify-content-between align-items-center w-100 mb-0 py-2">
+                                <span><i class="fas fa-tag"></i> {{ cart.applied_coupon.code }}</span>
+                                <button type="submit" class="btn btn-sm btn-link text-danger p-0">Remove</button>
+                            </div>
+                        </form>
+                    {% else %}
+                        <form method="post" action="{% url 'apply_coupon' %}" class="d-flex gap-2">
+                            {% csrf_token %}
+                            <input type="text" name="coupon_code" class="form-control" placeholder="Enter Coupon Code" required>
+                            <button type="submit" class="btn btn-outline-primary whitespace-nowrap">Apply</button>
+                        </form>
+                    {% endif %}
+                </div>
+                
+                <p class="savings-text">
+                    You will save on delivery{% if cart.applied_coupon %} and an extra ₹{{ cart.get_discount_amount }} via coupon{% endif %}!
+                </p>
                 <a href="{% url 'checkout' %}" class="btn btn-buy btn-large">PLACE ORDER</a>
                 <a href="{% url 'home' %}" class="continue-link">Continue Shopping</a>
             </div>

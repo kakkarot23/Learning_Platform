@@ -1,0 +1,21 @@
+PRODUCT ID: 13
+NAME: Wall-Mounted Bathroom Storage Cabinet
+CATEGORY: Home Essentials
+PRICE: INR 1299.99
+MRP: INR 1999.99
+DISCOUNT PERCENT: 35%
+RATING: 4.5 / 5.0
+REVIEWS COUNT: 87
+STOCK: 1
+SHORT DESCRIPTION: Modern bathroom organizer with tinted doors
+ACTIVE STATUS: Active
+IMAGE FILE: WhatsApp Image 2026-06-05 at 16.05.47.jpeg
+
+=== HIGHLIGHTS ===
+3-tier internal shelving
+Smoke-tinted ribbed doors
+Bottom hooks for towels
+Space-saving wall mount
+
+=== FULL DESCRIPTION ===
+Maximize bathroom storage with this sleek wall-mounted cabinet. Features smoke-tinted ribbed doors, three internal shelves, and bottom hooks for towels and accessories. Modern design for any bathroom.
